@@ -6,8 +6,10 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.SynchronousQueue;
@@ -160,5 +162,20 @@ class DefaultThreadExecutor extends ThreadExecutor {
     @Override
     public boolean isMainThread() {
         return Looper.getMainLooper().getThread() == Thread.currentThread();
+    }
+
+    @Override
+    public <T> Future<T> submit(Callable<T> task) {
+        return mDiskIO.submit(task);
+    }
+
+    @Override
+    public <T> Future<T> submit(Runnable task, T result) {
+        return mDiskIO.submit(task,result);
+    }
+
+    @Override
+    public Future<?> submit(Runnable task) {
+        return mDiskIO.submit(task);
     }
 }

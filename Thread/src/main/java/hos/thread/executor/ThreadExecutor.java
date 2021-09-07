@@ -2,8 +2,10 @@ package hos.thread.executor;
 
 import androidx.annotation.NonNull;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * <p>Title: TaskExecutor </p>
@@ -41,7 +43,7 @@ public abstract class ThreadExecutor {
      *
      * @param runnable 主线程
      */
-    public abstract void  postToMain(@NonNull final Runnable runnable);
+    public abstract void postToMain(@NonNull final Runnable runnable);
 
     /**
      * 在主线程上运行
@@ -49,7 +51,6 @@ public abstract class ThreadExecutor {
      * @param runnable 主线程
      */
     public void postOnMain(@NonNull final Runnable runnable) {
-
         if (isMainThread()) {
             runnable.run();
         } else {
@@ -71,4 +72,10 @@ public abstract class ThreadExecutor {
      * @return true if we are on the main thread, false otherwise.
      */
     public abstract boolean isMainThread();
+
+    public abstract <T> Future<T> submit(Callable<T> task);
+
+    public abstract <T> Future<T> submit(Runnable task, T result);
+
+    public abstract Future<?> submit(Runnable task);
 }

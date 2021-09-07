@@ -3,8 +3,10 @@ package hos.thread.executor;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * <p>Title: ThreadTaskExecutor </p>
@@ -99,12 +101,12 @@ public class ThreadTaskExecutor extends ThreadExecutor {
 
     @Override
     public boolean postDelayed(@NonNull Runnable runnable, long delayMillis) {
-        return mDelegate.postDelayed(runnable,delayMillis);
+        return mDelegate.postDelayed(runnable, delayMillis);
     }
 
     @Override
     public boolean postAtTime(@NonNull Runnable runnable, long uptimeMillis) {
-        return mDelegate.postAtTime(runnable,uptimeMillis);
+        return mDelegate.postAtTime(runnable, uptimeMillis);
     }
 
     @Override
@@ -120,5 +122,20 @@ public class ThreadTaskExecutor extends ThreadExecutor {
     @Override
     public boolean isMainThread() {
         return mDelegate.isMainThread();
+    }
+
+    @Override
+    public <T> Future<T> submit(Callable<T> task) {
+        return mDelegate.submit(task);
+    }
+
+    @Override
+    public <T> Future<T> submit(Runnable task, T result) {
+        return mDelegate.submit(task, result);
+    }
+
+    @Override
+    public Future<?> submit(Runnable task) {
+        return mDelegate.submit(task);
     }
 }
