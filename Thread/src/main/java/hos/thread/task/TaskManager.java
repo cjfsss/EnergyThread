@@ -2,12 +2,13 @@ package hos.thread.task;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+
+import hos.thread.interfaces.IDoInBackground;
+import hos.thread.interfaces.IPostExecute;
+import hos.thread.interfaces.IProgressUpdate;
 
 
 /**
@@ -26,18 +27,17 @@ public class TaskManager<Params, Progress, Result> {
     private CountDownLatch mCountDownLatch;
     private int mCurrentProgress;
     private int mTotalCount;
-    private MutableLiveData<Integer> mProgressUpdate;
-    private List<Task<Params, Progress, Result>> mTaskList;
-
+    private IProgressUpdate<Integer> mProgressUpdateThread;
+    private List<TaskThread<Params, Progress, Result>> mTaskList;
 
     private TaskManager<Params, Progress, Result> setTotalCount(int totalCount) {
         mTotalCount = totalCount;
         return this;
     }
 
-    public TaskManager<Params, Progress, Result> setProgressUpdate(@NonNull LifecycleOwner owner, @NonNull Observer<Integer> observer) {
-        this.mProgressUpdate = new MutableLiveData<>();
-        mProgressUpdate.observe(owner, observer);
+
+    public TaskManager<Params, Progress, Result> setProgressUpdate(@NonNull IProgressUpdate<Integer> observer) {
+        mProgressUpdateThread = observer;
         return this;
     }
 
@@ -47,7 +47,7 @@ public class TaskManager<Params, Progress, Result> {
      * @param taskList 要执行的
      * @return
      */
-    public TaskManager<Params, Progress, Result> setTaskList(@NonNull final List<Task<Params, Progress, Result>> taskList) {
+    public TaskManager<Params, Progress, Result> setTaskList(@NonNull final List<TaskThread<Params, Progress, Result>> taskList) {
         mTaskList = taskList;
         return setTotalCount(mTaskList.size());
     }
@@ -55,18 +55,18 @@ public class TaskManager<Params, Progress, Result> {
     /**
      * 添加计数器任务
      */
-    private void setViewActive(@NonNull LifecycleOwner owner, @NonNull Observer<Boolean> observer) {
+    private void setViewActive(@NonNull IPostExecute<Boolean> observer) {
         // 计数器
         mCountDownLatch = new CountDownLatch(mTotalCount);
-        new Task<CountDownLatch, Integer, Boolean>()
-                .setDoInBackground(new ITask.IDoInBackground<CountDownLatch, Integer, Boolean>() {
+        new TaskThread<CountDownLatch, Integer, Boolean>()
+                .setDoInBackground(new IDoInBackground<CountDownLatch, Boolean>() {
                     @Override
-                    public Boolean doInBackground(@NonNull MutableLiveData<Integer> publishProgress, @Nullable CountDownLatch... countDownLatches) {
+                    public Boolean doInBackground(@Nullable List<CountDownLatch> countDownLatches) {
                         try {
                             if (countDownLatches == null) {
                                 throw new NullPointerException("param is null");
                             }
-                            countDownLatches[0].await();
+                            countDownLatches.get(0).await();
                             return true;//顺利完成
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -74,49 +74,55 @@ public class TaskManager<Params, Progress, Result> {
                         }
                     }
                 })
-                .setPostExecute(owner, new Observer<Boolean>() {
+                .setPostExecute(new IPostExecute<Boolean>() {
                     @Override
-                    public void onChanged(Boolean isSuccess) {
+                    public void onPostExecute(@NonNull Boolean isSuccess) {
                         clear();
-                        observer.onChanged(isSuccess);
+                        observer.onPostExecute(isSuccess);
                     }
                 }).startOnExecutor(mCountDownLatch);
     }
 
-    public void startOnExecutor(@NonNull LifecycleOwner owner, @NonNull Observer<Boolean> observer, Params... params) {
+    public final void startOnExecutor(@NonNull IPostExecute<Boolean> observer) {
         if (mTaskList == null) {
             return;
         }
-        for (Task<Params, Progress, Result> task : mTaskList) {
-            task.setPostExecute(owner, (Observer<Result>) o -> {
-                // 一个任务完成
-                mCountDownLatch.countDown();
-                long currentCount = mCountDownLatch.getCount();
-                mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
-                if (mProgressUpdate != null) {
-                    mProgressUpdate.postValue(mCurrentProgress);
+        for (TaskThread<Params, Progress, Result> task : mTaskList) {
+            task.setPostExecute(new IPostExecute<Result>() {
+                @Override
+                public void onPostExecute(@NonNull Result result) {
+                    // 一个任务完成
+                    mCountDownLatch.countDown();
+                    long currentCount = mCountDownLatch.getCount();
+                    mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
+                    if (mProgressUpdateThread != null) {
+                        mProgressUpdateThread.onProgressUpdate(mCurrentProgress);
+                    }
                 }
-            }).startOnExecutor(params);
+            }).startOnExecutor();
         }
-        setViewActive(owner, observer);
+        setViewActive(observer);
     }
 
-    public void start(@NonNull LifecycleOwner owner, @NonNull Observer<Boolean> observer, Params... params) {
+    public final void start(@NonNull IPostExecute<Boolean> observer) {
         if (mTaskList == null) {
             return;
         }
-        for (Task<Params, Progress, Result> task : mTaskList) {
-            task.setPostExecute(owner, (Observer<Result>) o -> {
-                // 一个任务完成
-                mCountDownLatch.countDown();
-                long currentCount = mCountDownLatch.getCount();
-                mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
-                if (mProgressUpdate != null) {
-                    mProgressUpdate.postValue(mCurrentProgress);
+        for (TaskThread<Params, Progress, Result> task : mTaskList) {
+            task.setPostExecute(new IPostExecute<Result>() {
+                @Override
+                public void onPostExecute(@NonNull Result result) {
+                    // 一个任务完成
+                    mCountDownLatch.countDown();
+                    long currentCount = mCountDownLatch.getCount();
+                    mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
+                    if (mProgressUpdateThread != null) {
+                        mProgressUpdateThread.onProgressUpdate(mCurrentProgress);
+                    }
                 }
-            }).start(params);
+            }).start();
         }
-        setViewActive(owner, observer);
+        setViewActive(observer);
     }
 
     public void clear() {
