@@ -7,7 +7,6 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.cjf.demo.databinding.ActivityMainBinding;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import hos.thread.executor.ThreadTaskExecutor;
 import hos.thread.interfaces.IDoInBackground;
-import hos.thread.interfaces.IDoInBackgroundLiveData;
 import hos.thread.interfaces.IPostExecute;
 import hos.thread.interfaces.IProgressUpdate;
 import hos.thread.task.TaskLive;
@@ -66,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
         List<TaskLive<String, Integer, Boolean>> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             list.add(new TaskLive<String, Integer, Boolean>()
-                    .setDoInBackground(new IDoInBackgroundLiveData<String, Integer, Boolean>() {
+                    .setDoInBackground(new IDoInBackground<String,  Boolean>() {
                         @Override
-                        public Boolean doInBackground(@NonNull MutableLiveData<Integer> publishProgress, @Nullable List<String> strings) {
+                        public Boolean doInBackground(@Nullable List<String> strings) {
                             try {
                                 Thread.sleep(3000);
                                 return true;

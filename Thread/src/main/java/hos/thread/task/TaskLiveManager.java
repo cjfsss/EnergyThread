@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import hos.thread.interfaces.IDoInBackgroundLiveData;
+import hos.thread.interfaces.IDoInBackground;
 
 
 /**
@@ -62,9 +62,9 @@ public class TaskLiveManager<Params, Progress, Result> {
         // 计数器
         mCountDownLatch = new CountDownLatch(mTotalCount);
         new TaskLive<CountDownLatch, Integer, Boolean>()
-                .setDoInBackground(new IDoInBackgroundLiveData<CountDownLatch, Integer, Boolean>() {
+                .setDoInBackground(new IDoInBackground<CountDownLatch,  Boolean>() {
                     @Override
-                    public Boolean doInBackground(@NonNull MutableLiveData<Integer> publishProgress, @Nullable List<CountDownLatch> countDownLatches) {
+                    public Boolean doInBackground(@Nullable List<CountDownLatch> countDownLatches) {
                         try {
                             if (countDownLatches == null) {
                                 throw new NullPointerException("param is null");

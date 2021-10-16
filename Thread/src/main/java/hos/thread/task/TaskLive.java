@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import hos.thread.executor.ThreadTaskExecutor;
-import hos.thread.interfaces.IDoInBackgroundLiveData;
+import hos.thread.interfaces.IDoInBackground;
 
 /**
  * <p>Title: Task </p>
@@ -32,7 +32,7 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     @NonNull
     private final MutableLiveData<Progress> mProgressUpdate = new MutableLiveData<>();
 
-    private IDoInBackgroundLiveData<Params, Progress, Result> mDoInBackground;
+    private IDoInBackground<Params, Result> mDoInBackground;
     @NonNull
     private final MutableLiveData<Result> mPostExecute = new MutableLiveData<>();
 
@@ -42,14 +42,14 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     }
 
     @SafeVarargs
-    public TaskLive(IDoInBackgroundLiveData<Params, Progress, Result> mDoInBackground, @NonNull LifecycleOwner owner, @NonNull Observer<Result> postExecute, @NonNull Observer<Progress> progressUpdate, @Nullable Params... params) {
+    public TaskLive(IDoInBackground<Params, Result> mDoInBackground, @NonNull LifecycleOwner owner, @NonNull Observer<Result> postExecute, @NonNull Observer<Progress> progressUpdate, @Nullable Params... params) {
         this.mDoInBackground = mDoInBackground;
         this.mProgressUpdate.observe(owner, progressUpdate);
         param(params);
     }
 
     @SafeVarargs
-    public TaskLive(IDoInBackgroundLiveData<Params, Progress, Result> mDoInBackground, @NonNull LifecycleOwner owner, @NonNull Observer<Result> postExecute, @Nullable Params... params) {
+    public TaskLive(IDoInBackground<Params, Result> mDoInBackground, @NonNull LifecycleOwner owner, @NonNull Observer<Result> postExecute, @Nullable Params... params) {
         this.mDoInBackground = mDoInBackground;
         this.mPostExecute.observe(owner, postExecute);
         param(params);
@@ -57,7 +57,7 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     }
 
     @SafeVarargs
-    public TaskLive(IDoInBackgroundLiveData<Params, Progress, Result> mDoInBackground, @Nullable Params... params) {
+    public TaskLive(IDoInBackground<Params, Result> mDoInBackground, @Nullable Params... params) {
         this.mDoInBackground = mDoInBackground;
         param(params);
     }
@@ -68,13 +68,21 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
         mPreExecute.postValue(true);
     }
 
+    @Override
+    protected void onProgressUpdate(Progress... values) {
+        super.onProgressUpdate(values);
+        if (values.length > 0) {
+            mProgressUpdate.postValue(values[0]);
+        }
+    }
+
     @SafeVarargs
     @Override
     public final Result doInBackground(@Nullable Params... params) {
         if (params != null) {
             paramList.addAll(Arrays.asList(params));
         }
-        return mDoInBackground == null ? null : mDoInBackground.doInBackground(mProgressUpdate, paramList);
+        return mDoInBackground == null ? null : mDoInBackground.doInBackground(paramList);
     }
 
     @Override
@@ -106,7 +114,7 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     }
 
     @NonNull
-    public TaskLive<Params, Progress, Result> setDoInBackground(@NonNull IDoInBackgroundLiveData<Params, Progress, Result> doInBackground) {
+    public TaskLive<Params, Progress, Result> setDoInBackground(@NonNull IDoInBackground<Params, Result> doInBackground) {
         mDoInBackground = doInBackground;
         return this;
     }
