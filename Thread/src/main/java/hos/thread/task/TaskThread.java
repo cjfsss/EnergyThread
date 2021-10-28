@@ -24,10 +24,10 @@ import hos.thread.interfaces.IProgressUpdate;
  * @date : 2020/2/21 11:23
  */
 @SuppressWarnings({"deprecation"})
-public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
+public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> implements IProgressUpdate<Progress> {
 
 
-    private IDoInBackground<Params, Result> mDoInBackground;
+    private IDoInBackground<Params, Progress, Result> mDoInBackground;
     @Nullable
     private IPostExecute<Result> mPostExecute = null;
     @Nullable
@@ -39,7 +39,7 @@ public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Prog
     }
 
     @SafeVarargs
-    public TaskThread(IDoInBackground<Params, Result> mDoInBackground, @Nullable IPostExecute<Result> mPostExecute, @Nullable IProgressUpdate<Progress> mProgressUpdate, @Nullable Params... params) {
+    public TaskThread(IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable IPostExecute<Result> mPostExecute, @Nullable IProgressUpdate<Progress> mProgressUpdate, @Nullable Params... params) {
         this.mDoInBackground = mDoInBackground;
         this.mPostExecute = mPostExecute;
         this.mProgressUpdate = mProgressUpdate;
@@ -47,12 +47,12 @@ public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Prog
     }
 
     @SafeVarargs
-    public TaskThread(IDoInBackground<Params, Result> mDoInBackground, @Nullable IPostExecute<Result> mPostExecute, @Nullable Params... params) {
+    public TaskThread(IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable IPostExecute<Result> mPostExecute, @Nullable Params... params) {
         this(mDoInBackground, mPostExecute, null, params);
     }
 
     @SafeVarargs
-    public TaskThread(IDoInBackground<Params, Result> mDoInBackground, @Nullable Params... params) {
+    public TaskThread(IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable Params... params) {
         this(mDoInBackground, null, null, params);
     }
 
@@ -71,7 +71,7 @@ public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Prog
         if (params != null) {
             paramList.addAll(Arrays.asList(params));
         }
-        return mDoInBackground == null ? null : mDoInBackground.doInBackground(paramList);
+        return mDoInBackground == null ? null : mDoInBackground.doInBackground(this, paramList);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Prog
 
 
     @NonNull
-    public TaskThread<Params, Progress, Result> setDoInBackground(@NonNull IDoInBackground<Params, Result> doInBackground) {
+    public TaskThread<Params, Progress, Result> setDoInBackground(@NonNull IDoInBackground<Params,Progress, Result> doInBackground) {
         mDoInBackground = doInBackground;
         return this;
     }
@@ -126,5 +126,11 @@ public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Prog
             paramList.addAll(objects);
         }
         return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void onProgressUpdate(Progress values) {
+        publishProgress(values);
     }
 }

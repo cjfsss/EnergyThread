@@ -14,6 +14,6 @@ import java.util.List;
  * @version : 1.0
  * @date : 2021/9/27 15:53
  */
-public interface IDoInBackground<Params,  Result> {
-    Result doInBackground(@Nullable List<Params> params);
+public interface IDoInBackground<Params, Progress, Result> {
+    Result doInBackground(IProgressUpdate<Progress> progressUpdate, @Nullable List<Params> params);
 }

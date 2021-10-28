@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import hos.thread.interfaces.IDoInBackground;
+import hos.thread.interfaces.IProgressUpdate;
 
 
 /**
@@ -62,9 +63,10 @@ public class TaskLiveManager<Params, Progress, Result> {
         // 计数器
         mCountDownLatch = new CountDownLatch(mTotalCount);
         new TaskLive<CountDownLatch, Integer, Boolean>()
-                .setDoInBackground(new IDoInBackground<CountDownLatch,  Boolean>() {
+                .setDoInBackground(new IDoInBackground<CountDownLatch, Integer,  Boolean>() {
+
                     @Override
-                    public Boolean doInBackground(@Nullable List<CountDownLatch> countDownLatches) {
+                    public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<CountDownLatch> countDownLatches) {
                         try {
                             if (countDownLatches == null) {
                                 throw new NullPointerException("param is null");

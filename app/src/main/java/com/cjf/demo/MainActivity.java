@@ -64,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
         List<TaskLive<String, Integer, Boolean>> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             list.add(new TaskLive<String, Integer, Boolean>()
-                    .setDoInBackground(new IDoInBackground<String,  Boolean>() {
+                    .setDoInBackground(new IDoInBackground<String,Integer,  Boolean>() {
                         @Override
-                        public Boolean doInBackground(@Nullable List<String> strings) {
+                        public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<String> strings) {
                             try {
                                 Thread.sleep(3000);
                                 return true;
@@ -111,9 +111,9 @@ public class MainActivity extends AppCompatActivity {
         List<TaskThread<String, Integer, Boolean>> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             list.add(new TaskThread<String, Integer, Boolean>()
-                    .setDoInBackground(new IDoInBackground<String, Boolean>() {
+                    .setDoInBackground(new IDoInBackground<String,Integer, Boolean>() {
                         @Override
-                        public Boolean doInBackground(@Nullable List<String> strings) {
+                        public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<String> strings) {
                             try {
                                 Thread.sleep(3000);
                                 return true;

@@ -14,6 +14,7 @@ import java.util.List;
 
 import hos.thread.executor.ThreadTaskExecutor;
 import hos.thread.interfaces.IDoInBackground;
+import hos.thread.interfaces.IProgressUpdate;
 
 /**
  * <p>Title: Task </p>
@@ -25,14 +26,14 @@ import hos.thread.interfaces.IDoInBackground;
  * @date : 2020/2/21 11:23
  */
 @SuppressWarnings({"deprecation"})
-public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
+public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> implements IProgressUpdate<Progress> {
 
     @NonNull
     private final MutableLiveData<Boolean> mPreExecute = new MutableLiveData<>();
     @NonNull
     private final MutableLiveData<Progress> mProgressUpdate = new MutableLiveData<>();
 
-    private IDoInBackground<Params, Result> mDoInBackground;
+    private IDoInBackground<Params, Progress, Result> mDoInBackground;
     @NonNull
     private final MutableLiveData<Result> mPostExecute = new MutableLiveData<>();
 
@@ -42,14 +43,14 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     }
 
     @SafeVarargs
-    public TaskLive(IDoInBackground<Params, Result> mDoInBackground, @NonNull LifecycleOwner owner, @NonNull Observer<Result> postExecute, @NonNull Observer<Progress> progressUpdate, @Nullable Params... params) {
+    public TaskLive(IDoInBackground<Params, Progress, Result> mDoInBackground, @NonNull LifecycleOwner owner, @NonNull Observer<Result> postExecute, @NonNull Observer<Progress> progressUpdate, @Nullable Params... params) {
         this.mDoInBackground = mDoInBackground;
         this.mProgressUpdate.observe(owner, progressUpdate);
         param(params);
     }
 
     @SafeVarargs
-    public TaskLive(IDoInBackground<Params, Result> mDoInBackground, @NonNull LifecycleOwner owner, @NonNull Observer<Result> postExecute, @Nullable Params... params) {
+    public TaskLive(IDoInBackground<Params, Progress, Result> mDoInBackground, @NonNull LifecycleOwner owner, @NonNull Observer<Result> postExecute, @Nullable Params... params) {
         this.mDoInBackground = mDoInBackground;
         this.mPostExecute.observe(owner, postExecute);
         param(params);
@@ -57,7 +58,7 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     }
 
     @SafeVarargs
-    public TaskLive(IDoInBackground<Params, Result> mDoInBackground, @Nullable Params... params) {
+    public TaskLive(IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable Params... params) {
         this.mDoInBackground = mDoInBackground;
         param(params);
     }
@@ -68,8 +69,9 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
         mPreExecute.postValue(true);
     }
 
+    @SafeVarargs
     @Override
-    protected void onProgressUpdate(Progress... values) {
+    protected final void onProgressUpdate(Progress... values) {
         super.onProgressUpdate(values);
         if (values.length > 0) {
             mProgressUpdate.postValue(values[0]);
@@ -82,7 +84,7 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
         if (params != null) {
             paramList.addAll(Arrays.asList(params));
         }
-        return mDoInBackground == null ? null : mDoInBackground.doInBackground(paramList);
+        return mDoInBackground == null ? null : mDoInBackground.doInBackground(this, paramList);
     }
 
     @Override
@@ -114,7 +116,7 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     }
 
     @NonNull
-    public TaskLive<Params, Progress, Result> setDoInBackground(@NonNull IDoInBackground<Params, Result> doInBackground) {
+    public TaskLive<Params, Progress, Result> setDoInBackground(@NonNull IDoInBackground<Params, Progress, Result> doInBackground) {
         mDoInBackground = doInBackground;
         return this;
     }
@@ -140,5 +142,11 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
             paramList.addAll(objects);
         }
         return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void onProgressUpdate(Progress values) {
+        publishProgress(values);
     }
 }
