@@ -73,6 +73,9 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     @Override
     protected final void onProgressUpdate(Progress... values) {
         super.onProgressUpdate(values);
+        if (isCancelled()) {
+            return;
+        }
         if (values.length > 0) {
             mProgressUpdate.postValue(values[0]);
         }

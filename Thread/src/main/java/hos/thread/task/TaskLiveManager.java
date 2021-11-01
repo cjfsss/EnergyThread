@@ -1,5 +1,7 @@
 package hos.thread.task;
 
+import android.os.AsyncTask;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
@@ -31,6 +33,7 @@ public class TaskLiveManager<Params, Progress, Result> {
     private int mTotalCount;
     private MutableLiveData<Integer> mProgressUpdate;
     private List<TaskLive<Params, Progress, Result>> mTaskList;
+    private AsyncTask<CountDownLatch, Integer, Boolean> countDownLatchAsyncTask;
 
     private TaskLiveManager<Params, Progress, Result> setTotalCount(int totalCount) {
         mTotalCount = totalCount;
@@ -62,8 +65,8 @@ public class TaskLiveManager<Params, Progress, Result> {
     private void setViewActive(@NonNull LifecycleOwner owner, @NonNull Observer<Boolean> observer) {
         // 计数器
         mCountDownLatch = new CountDownLatch(mTotalCount);
-        new TaskLive<CountDownLatch, Integer, Boolean>()
-                .setDoInBackground(new IDoInBackground<CountDownLatch, Integer,  Boolean>() {
+        countDownLatchAsyncTask = new TaskLive<CountDownLatch, Integer, Boolean>()
+                .setDoInBackground(new IDoInBackground<CountDownLatch, Integer, Boolean>() {
 
                     @Override
                     public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<CountDownLatch> countDownLatches) {
@@ -122,6 +125,22 @@ public class TaskLiveManager<Params, Progress, Result> {
             }).start();
         }
         setViewActive(owner, observer);
+    }
+
+    /**
+     * 取消运行
+     *
+     * @param mayInterruptIfRunning 是否终止运行
+     */
+    public void cancel(boolean mayInterruptIfRunning) {
+        for (TaskLive<Params, Progress, Result> taskThread : mTaskList) {
+            if (taskThread != null && !taskThread.isCancelled()) {
+                taskThread.cancel(mayInterruptIfRunning);
+            }
+        }
+        if (countDownLatchAsyncTask != null && !countDownLatchAsyncTask.isCancelled()) {
+            countDownLatchAsyncTask.cancel(mayInterruptIfRunning);
+        }
     }
 
     public void clear() {

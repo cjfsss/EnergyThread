@@ -1,5 +1,7 @@
 package hos.thread.task;
 
+import android.os.AsyncTask;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -29,6 +31,7 @@ public class TaskManager<Params, Progress, Result> {
     private int mTotalCount;
     private IProgressUpdate<Integer> mProgressUpdateThread;
     private List<TaskThread<Params, Progress, Result>> mTaskList;
+    private AsyncTask<CountDownLatch, Integer, Boolean> countDownLatchAsyncTask;
 
     private TaskManager<Params, Progress, Result> setTotalCount(int totalCount) {
         mTotalCount = totalCount;
@@ -58,8 +61,8 @@ public class TaskManager<Params, Progress, Result> {
     private void setViewActive(@NonNull IPostExecute<Boolean> observer) {
         // 计数器
         mCountDownLatch = new CountDownLatch(mTotalCount);
-        new TaskThread<CountDownLatch, Integer, Boolean>()
-                .setDoInBackground(new IDoInBackground<CountDownLatch,Integer, Boolean>() {
+        countDownLatchAsyncTask = new TaskThread<CountDownLatch, Integer, Boolean>()
+                .setDoInBackground(new IDoInBackground<CountDownLatch, Integer, Boolean>() {
                     @Override
                     public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<CountDownLatch> countDownLatches) {
                         try {
@@ -123,6 +126,21 @@ public class TaskManager<Params, Progress, Result> {
             }).start();
         }
         setViewActive(observer);
+    }
+
+    /**
+     * 取消运行
+     * @param mayInterruptIfRunning 是否终止运行
+     */
+    public void cancel(boolean mayInterruptIfRunning) {
+        for (TaskThread<Params, Progress, Result> taskThread : mTaskList) {
+            if (taskThread != null && !taskThread.isCancelled()) {
+                taskThread.cancel(mayInterruptIfRunning);
+            }
+        }
+        if (countDownLatchAsyncTask != null && !countDownLatchAsyncTask.isCancelled()) {
+            countDownLatchAsyncTask.cancel(mayInterruptIfRunning);
+        }
     }
 
     public void clear() {

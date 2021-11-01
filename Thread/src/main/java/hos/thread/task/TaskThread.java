@@ -60,6 +60,9 @@ public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Prog
     @Override
     protected final void onProgressUpdate(Progress... values) {
         super.onProgressUpdate(values);
+        if (isCancelled()) {
+            return;
+        }
         if (mProgressUpdate != null && values.length > 0) {
             mProgressUpdate.onProgressUpdate(values[0]);
         }
