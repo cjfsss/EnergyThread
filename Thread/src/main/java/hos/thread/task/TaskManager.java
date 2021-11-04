@@ -81,8 +81,8 @@ public class TaskManager<Params, Progress, Result> {
                 .setPostExecute(new IPostExecute<Boolean>() {
                     @Override
                     public void onPostExecute(int index, @NonNull Boolean isSuccess) {
-                        clear();
                         observer.onPostExecute(index, isSuccess);
+                        clear();
                     }
                 }).startOnExecutor(mCountDownLatch);
     }
@@ -103,9 +103,6 @@ public class TaskManager<Params, Progress, Result> {
                     mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
                     if (mProgressUpdateThread != null) {
                         mProgressUpdateThread.onProgressUpdate(mCurrentProgress);
-                    }
-                    if (mTaskList instanceof Vector) {
-                        mTaskList.remove(index);
                     }
                 }
             }).startOnExecutor();
@@ -129,9 +126,6 @@ public class TaskManager<Params, Progress, Result> {
                     mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
                     if (mProgressUpdateThread != null) {
                         mProgressUpdateThread.onProgressUpdate(mCurrentProgress);
-                    }
-                    if (mTaskList instanceof Vector) {
-                        mTaskList.remove(index);
                     }
                 }
             }).start();

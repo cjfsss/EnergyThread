@@ -12,8 +12,10 @@ import androidx.lifecycle.Observer;
 import com.cjf.demo.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Vector;
 
 import hos.thread.executor.ThreadTaskExecutor;
 import hos.thread.interfaces.IDoInBackground;
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void start() {
         // 添加工作任务
-        List<TaskLive<String, Integer, Boolean>> list = new ArrayList<>();
+        List<TaskLive<String, Integer, Boolean>> list = new Vector<>();
         for (int i = 0; i < 100; i++) {
             list.add(new TaskLive<String, Integer, Boolean>()
                     .setDoInBackground(new IDoInBackground<String,Integer,  Boolean>() {
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startThread() {
         // 添加工作任务
-        List<TaskThread<String, Integer, Boolean>> list = new ArrayList<>();
+        List<TaskThread<String, Integer, Boolean>> list = new LinkedList<>();
         for (int i = 0; i < 1000; i++) {
             list.add(new TaskThread<String, Integer, Boolean>(i)
                     .setDoInBackground(new IDoInBackground<String,Integer, Boolean>() {

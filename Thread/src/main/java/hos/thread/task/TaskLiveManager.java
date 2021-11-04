@@ -87,8 +87,8 @@ public class TaskLiveManager<Params, Progress, Result> {
                 .setPostExecute(owner, new Observer<Boolean>() {
                     @Override
                     public void onChanged(Boolean isSuccess) {
-                        clear();
                         observer.onChanged(isSuccess);
+                        clear();
                     }
                 }).startOnExecutor(mCountDownLatch);
     }
@@ -107,14 +107,6 @@ public class TaskLiveManager<Params, Progress, Result> {
                 mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
                 if (mProgressUpdate != null) {
                     mProgressUpdate.postValue(mCurrentProgress);
-                }
-            }).setPostExecuteIndex(owner, new Observer<Integer>() {
-                @SuppressWarnings("SuspiciousMethodCalls")
-                @Override
-                public void onChanged(Integer index) {
-                    if (index != null && mTaskList instanceof Vector) {
-                        mTaskList.remove(index);
-                    }
                 }
             }).startOnExecutor();
         }
@@ -135,14 +127,6 @@ public class TaskLiveManager<Params, Progress, Result> {
                 mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
                 if (mProgressUpdate != null) {
                     mProgressUpdate.postValue(mCurrentProgress);
-                }
-            }).setPostExecuteIndex(owner, new Observer<Integer>() {
-                @SuppressWarnings("SuspiciousMethodCalls")
-                @Override
-                public void onChanged(Integer index) {
-                    if (index != null && mTaskList instanceof Vector) {
-                        mTaskList.remove(index);
-                    }
                 }
             }).start();
         }
