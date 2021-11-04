@@ -29,31 +29,58 @@ public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Prog
 
     private IDoInBackground<Params, Progress, Result> mDoInBackground;
     @Nullable
-    private IPostExecute<Result> mPostExecute = null;
+    private final List<IPostExecute<Result>> mPostExecuteList = new LinkedList<>();
     @Nullable
     private IProgressUpdate<Progress> mProgressUpdate = null;
 
     private final List<Params> paramList = new LinkedList<>();
 
+    private int index;
+
     public TaskThread() {
     }
 
+    public TaskThread(int index) {
+        this.index = index;
+    }
+
     @SafeVarargs
-    public TaskThread(IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable IPostExecute<Result> mPostExecute, @Nullable IProgressUpdate<Progress> mProgressUpdate, @Nullable Params... params) {
+    public TaskThread(int index, IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable IPostExecute<Result> mPostExecute, @Nullable IProgressUpdate<Progress> mProgressUpdate, @Nullable Params... params) {
         this.mDoInBackground = mDoInBackground;
-        this.mPostExecute = mPostExecute;
+        this.mPostExecuteList.add(mPostExecute);
         this.mProgressUpdate = mProgressUpdate;
+        this.index = index;
         param(params);
     }
 
     @SafeVarargs
+    public TaskThread(int index, IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable IPostExecute<Result> mPostExecute, @Nullable Params... params) {
+        this(index, mDoInBackground, mPostExecute, null, params);
+    }
+
+    @SafeVarargs
+    public TaskThread(int index, IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable Params... params) {
+        this(index, mDoInBackground, null, null, params);
+    }
+
+    @SafeVarargs
+    public TaskThread(IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable IPostExecute<Result> mPostExecute, @Nullable IProgressUpdate<Progress> mProgressUpdate, @Nullable Params... params) {
+        this(-1, mDoInBackground, mPostExecute, mProgressUpdate, params);
+    }
+
+    @SafeVarargs
     public TaskThread(IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable IPostExecute<Result> mPostExecute, @Nullable Params... params) {
-        this(mDoInBackground, mPostExecute, null, params);
+        this(-1, mDoInBackground, mPostExecute, null, params);
     }
 
     @SafeVarargs
     public TaskThread(IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable Params... params) {
-        this(mDoInBackground, null, null, params);
+        this(-1, mDoInBackground, null, null, params);
+    }
+
+    public TaskThread<Params, Progress, Result> setIndex(int index) {
+        this.index = index;
+        return this;
     }
 
     @SafeVarargs
@@ -80,8 +107,10 @@ public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Prog
     @Override
     protected void onPostExecute(@NonNull Result result) {
         super.onPostExecute(result);
-        if (mPostExecute != null) {
-            mPostExecute.onPostExecute(result);
+        if (mPostExecuteList != null) {
+            for (IPostExecute<Result> execute : mPostExecuteList) {
+                execute.onPostExecute(index, result);
+            }
         }
     }
 
@@ -97,14 +126,16 @@ public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Prog
 
 
     @NonNull
-    public TaskThread<Params, Progress, Result> setDoInBackground(@NonNull IDoInBackground<Params,Progress, Result> doInBackground) {
+    public TaskThread<Params, Progress, Result> setDoInBackground(@NonNull IDoInBackground<Params, Progress, Result> doInBackground) {
         mDoInBackground = doInBackground;
         return this;
     }
 
     @NonNull
     public TaskThread<Params, Progress, Result> setPostExecute(@NonNull IPostExecute<Result> observer) {
-        mPostExecute = observer;
+        if (mPostExecuteList != null) {
+            mPostExecuteList.add(observer);
+        }
         return this;
     }
 

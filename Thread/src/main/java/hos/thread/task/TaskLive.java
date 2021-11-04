@@ -14,6 +14,7 @@ import java.util.List;
 
 import hos.thread.executor.ThreadTaskExecutor;
 import hos.thread.interfaces.IDoInBackground;
+import hos.thread.interfaces.IPostExecute;
 import hos.thread.interfaces.IProgressUpdate;
 
 /**
@@ -35,11 +36,19 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
 
     private IDoInBackground<Params, Progress, Result> mDoInBackground;
     @NonNull
-    private final MutableLiveData<Result> mPostExecute = new MutableLiveData<>();
+    private final MutableLiveData<Result> mPostExecuteLive = new MutableLiveData<>();
+    @NonNull
+    private final MutableLiveData<Integer> mPostExecuteLiveIndex = new MutableLiveData<>();
 
     private final List<Params> paramList = new LinkedList<>();
 
+    private int index;
+
     public TaskLive() {
+    }
+
+    public TaskLive(int index) {
+        this.index = index;
     }
 
     @SafeVarargs
@@ -52,7 +61,7 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     @SafeVarargs
     public TaskLive(IDoInBackground<Params, Progress, Result> mDoInBackground, @NonNull LifecycleOwner owner, @NonNull Observer<Result> postExecute, @Nullable Params... params) {
         this.mDoInBackground = mDoInBackground;
-        this.mPostExecute.observe(owner, postExecute);
+        this.mPostExecuteLive.observe(owner, postExecute);
         param(params);
 
     }
@@ -61,6 +70,11 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     public TaskLive(IDoInBackground<Params, Progress, Result> mDoInBackground, @Nullable Params... params) {
         this.mDoInBackground = mDoInBackground;
         param(params);
+    }
+
+    public TaskLive<Params, Progress, Result> setIndex(int index) {
+        this.index = index;
+        return this;
     }
 
     @Override
@@ -93,7 +107,8 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     @Override
     protected void onPostExecute(@NonNull Result result) {
         super.onPostExecute(result);
-        mPostExecute.postValue(result);
+        mPostExecuteLive.postValue(result);
+        mPostExecuteLiveIndex.postValue(index);
     }
 
     @SafeVarargs
@@ -126,7 +141,13 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
 
     @NonNull
     public TaskLive<Params, Progress, Result> setPostExecute(@NonNull LifecycleOwner owner, @NonNull Observer<Result> observer) {
-        mPostExecute.observe(owner, observer);
+        mPostExecuteLive.observe(owner, observer);
+        return this;
+    }
+
+    @NonNull
+    public TaskLive<Params, Progress, Result> setPostExecuteIndex(@NonNull LifecycleOwner owner, @NonNull Observer<Integer> observer) {
+        mPostExecuteLiveIndex.observe(owner, observer);
         return this;
     }
 

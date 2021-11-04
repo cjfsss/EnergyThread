@@ -13,5 +13,5 @@ import androidx.annotation.NonNull;
  */
 public interface IPostExecute<Result> {
 
-    void onPostExecute(@NonNull Result result);
+    void onPostExecute(int index, @NonNull Result result);
 }

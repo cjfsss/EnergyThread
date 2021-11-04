@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 
 import hos.thread.interfaces.IDoInBackground;
@@ -79,9 +80,9 @@ public class TaskManager<Params, Progress, Result> {
                 })
                 .setPostExecute(new IPostExecute<Boolean>() {
                     @Override
-                    public void onPostExecute(@NonNull Boolean isSuccess) {
+                    public void onPostExecute(int index, @NonNull Boolean isSuccess) {
                         clear();
-                        observer.onPostExecute(isSuccess);
+                        observer.onPostExecute(index, isSuccess);
                     }
                 }).startOnExecutor(mCountDownLatch);
     }
@@ -90,16 +91,21 @@ public class TaskManager<Params, Progress, Result> {
         if (mTaskList == null) {
             return;
         }
-        for (TaskThread<Params, Progress, Result> task : mTaskList) {
-            task.setPostExecute(new IPostExecute<Result>() {
+        int size = mTaskList.size();
+        for (int i = 0; i < size; i++) {
+            TaskThread<Params, Progress, Result> task = mTaskList.get(i);
+            task.setIndex(i).setPostExecute(new IPostExecute<Result>() {
                 @Override
-                public void onPostExecute(@NonNull Result result) {
+                public void onPostExecute(int index, @NonNull Result result) {
                     // 一个任务完成
                     mCountDownLatch.countDown();
                     long currentCount = mCountDownLatch.getCount();
                     mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
                     if (mProgressUpdateThread != null) {
                         mProgressUpdateThread.onProgressUpdate(mCurrentProgress);
+                    }
+                    if (mTaskList instanceof Vector) {
+                        mTaskList.remove(index);
                     }
                 }
             }).startOnExecutor();
@@ -111,16 +117,21 @@ public class TaskManager<Params, Progress, Result> {
         if (mTaskList == null) {
             return;
         }
-        for (TaskThread<Params, Progress, Result> task : mTaskList) {
-            task.setPostExecute(new IPostExecute<Result>() {
+        int size = mTaskList.size();
+        for (int i = 0; i < size; i++) {
+            TaskThread<Params, Progress, Result> task = mTaskList.get(i);
+            task.setIndex(i).setPostExecute(new IPostExecute<Result>() {
                 @Override
-                public void onPostExecute(@NonNull Result result) {
+                public void onPostExecute(int index, @NonNull Result result) {
                     // 一个任务完成
                     mCountDownLatch.countDown();
                     long currentCount = mCountDownLatch.getCount();
                     mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
                     if (mProgressUpdateThread != null) {
                         mProgressUpdateThread.onProgressUpdate(mCurrentProgress);
+                    }
+                    if (mTaskList instanceof Vector) {
+                        mTaskList.remove(index);
                     }
                 }
             }).start();
@@ -130,6 +141,7 @@ public class TaskManager<Params, Progress, Result> {
 
     /**
      * 取消运行
+     *
      * @param mayInterruptIfRunning 是否终止运行
      */
     public void cancel(boolean mayInterruptIfRunning) {

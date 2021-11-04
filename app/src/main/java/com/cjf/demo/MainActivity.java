@@ -13,6 +13,7 @@ import com.cjf.demo.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import hos.thread.executor.ThreadTaskExecutor;
 import hos.thread.interfaces.IDoInBackground;
@@ -109,13 +110,15 @@ public class MainActivity extends AppCompatActivity {
     private void startThread() {
         // 添加工作任务
         List<TaskThread<String, Integer, Boolean>> list = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            list.add(new TaskThread<String, Integer, Boolean>()
+        for (int i = 0; i < 1000; i++) {
+            list.add(new TaskThread<String, Integer, Boolean>(i)
                     .setDoInBackground(new IDoInBackground<String,Integer, Boolean>() {
                         @Override
                         public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<String> strings) {
                             try {
-                                Thread.sleep(3000);
+                                Random random = new Random();
+                                int nextInt = random.nextInt(3);
+                                Thread.sleep(nextInt * 1000);
                                 return true;
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -125,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .setPostExecute(new IPostExecute<Boolean>() {
                         @Override
-                        public void onPostExecute(@NonNull Boolean aBoolean) {
+                        public void onPostExecute(int index, @NonNull Boolean aBoolean) {
 
                         }
                     }));
@@ -141,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .startOnExecutor(new IPostExecute<Boolean>() {
                     @Override
-                    public void onPostExecute(@NonNull Boolean isSuccess) {
+                    public void onPostExecute(int index, @NonNull Boolean isSuccess) {
                         getActivityMainBinding().tvSuccessInfo.setText("是否成功：" + isSuccess);
                     }
                 });

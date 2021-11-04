@@ -9,9 +9,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 
 import hos.thread.interfaces.IDoInBackground;
+import hos.thread.interfaces.IPostExecute;
 import hos.thread.interfaces.IProgressUpdate;
 
 
@@ -95,14 +97,24 @@ public class TaskLiveManager<Params, Progress, Result> {
         if (mTaskList == null) {
             return;
         }
-        for (TaskLive<Params, Progress, Result> task : mTaskList) {
-            task.setPostExecute(owner, (Observer<Result>) o -> {
+        int size = mTaskList.size();
+        for (int i = 0; i < size; i++) {
+            TaskLive<Params, Progress, Result> task = mTaskList.get(i);
+            task.setIndex(i).setPostExecute(owner, (Observer<Result>) o -> {
                 // 一个任务完成
                 mCountDownLatch.countDown();
                 long currentCount = mCountDownLatch.getCount();
                 mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
                 if (mProgressUpdate != null) {
                     mProgressUpdate.postValue(mCurrentProgress);
+                }
+            }).setPostExecuteIndex(owner, new Observer<Integer>() {
+                @SuppressWarnings("SuspiciousMethodCalls")
+                @Override
+                public void onChanged(Integer index) {
+                    if (index != null && mTaskList instanceof Vector) {
+                        mTaskList.remove(index);
+                    }
                 }
             }).startOnExecutor();
         }
@@ -113,14 +125,24 @@ public class TaskLiveManager<Params, Progress, Result> {
         if (mTaskList == null) {
             return;
         }
-        for (TaskLive<Params, Progress, Result> task : mTaskList) {
-            task.setPostExecute(owner, (Observer<Result>) o -> {
+        int size = mTaskList.size();
+        for (int i = 0; i < size; i++) {
+            TaskLive<Params, Progress, Result> task = mTaskList.get(i);
+            task.setIndex(i).setPostExecute(owner, (Observer<Result>) o -> {
                 // 一个任务完成
                 mCountDownLatch.countDown();
                 long currentCount = mCountDownLatch.getCount();
                 mCurrentProgress = (int) (mTotalCount - currentCount) * 100 / mTotalCount;
                 if (mProgressUpdate != null) {
                     mProgressUpdate.postValue(mCurrentProgress);
+                }
+            }).setPostExecuteIndex(owner, new Observer<Integer>() {
+                @SuppressWarnings("SuspiciousMethodCalls")
+                @Override
+                public void onChanged(Integer index) {
+                    if (index != null && mTaskList instanceof Vector) {
+                        mTaskList.remove(index);
+                    }
                 }
             }).start();
         }
