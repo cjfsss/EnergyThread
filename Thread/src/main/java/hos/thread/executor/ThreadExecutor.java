@@ -1,6 +1,7 @@
 package hos.thread.executor;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
@@ -78,4 +79,8 @@ public abstract class ThreadExecutor {
     public abstract <T> Future<T> submit(Runnable task, T result);
 
     public abstract Future<?> submit(Runnable task);
+
+    public abstract void removeCallbacks(@NonNull Runnable r);
+
+    public abstract void removeCallbacks(@NonNull Runnable r, @Nullable Object token);
 }

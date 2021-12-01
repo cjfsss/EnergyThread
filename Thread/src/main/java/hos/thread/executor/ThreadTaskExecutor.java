@@ -138,4 +138,20 @@ public class ThreadTaskExecutor extends ThreadExecutor {
     public Future<?> submit(Runnable task) {
         return mDelegate.submit(task);
     }
+
+    @Override
+    public void removeCallbacks(@NonNull Runnable r) {
+        if (mDelegate == null) {
+            return;
+        }
+        mDelegate.removeCallbacks(r);
+    }
+
+    @Override
+    public void removeCallbacks(@NonNull Runnable r, @Nullable Object token) {
+        if (mDelegate == null) {
+            return;
+        }
+        mDelegate.removeCallbacks(r, token);
+    }
 }

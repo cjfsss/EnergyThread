@@ -125,7 +125,7 @@ class DefaultThreadExecutor extends ThreadExecutor {
             }
         }
         //noinspection ConstantConditions
-        return mMainHandler.postDelayed(runnable,delayMillis);
+        return mMainHandler.postDelayed(runnable, delayMillis);
     }
 
     @Override
@@ -138,7 +138,7 @@ class DefaultThreadExecutor extends ThreadExecutor {
             }
         }
         //noinspection ConstantConditions
-        return mMainHandler.postAtTime(runnable,uptimeMillis);
+        return mMainHandler.postAtTime(runnable, uptimeMillis);
     }
 
     @Override
@@ -171,11 +171,27 @@ class DefaultThreadExecutor extends ThreadExecutor {
 
     @Override
     public <T> Future<T> submit(Runnable task, T result) {
-        return mDiskIO.submit(task,result);
+        return mDiskIO.submit(task, result);
     }
 
     @Override
     public Future<?> submit(Runnable task) {
         return mDiskIO.submit(task);
+    }
+
+    @Override
+    public void removeCallbacks(@NonNull Runnable r) {
+        if (mMainHandler == null) {
+            return;
+        }
+        mMainHandler.removeCallbacks(r);
+    }
+
+    @Override
+    public void removeCallbacks(@NonNull Runnable r, @Nullable Object token) {
+        if (mMainHandler == null) {
+            return;
+        }
+        mMainHandler.removeCallbacks(r, token);
     }
 }
