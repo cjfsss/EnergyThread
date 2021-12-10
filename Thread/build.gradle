@@ -27,3 +27,36 @@ dependencies {
     compileOnly 'androidx.annotation:annotation:1.2.0'
     compileOnly 'androidx.lifecycle:lifecycle-livedata-core:2.3.1'
 }
+
+apply plugin: 'maven'
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: "file:///C:/Users/Administrator/.m2/repository")
+        pom.project{
+            groupId = "energy"
+            artifactId = "thread"
+            packaging = "aar"
+            version = "0.0.1"
+        }
+    }
+    // type显示指定任务类型或任务, 这里指定要执行Javadoc这个task,这个task在gradle中已经定义
+    task androidJavadocs(type: Javadoc) {
+        // 设置源码所在的位置
+        source = android.sourceSets.main.java.sourceFiles
+    }
+    // 生成javadoc.jar
+    task androidJavadocsJar(type: Jar) {
+        // 指定文档名称
+        classifier = 'javadoc'
+        from androidJavadocs.destinationDir
+    }
+    task androidSourcesJar(type: Jar) {
+        // 指定文档名称
+        classifier = 'source'
+        from android.sourceSets.main.java.sourceFiles
+    }
+    artifacts {
+        archives androidSourcesJar
+        archives androidJavadocsJar
+    }
+}
