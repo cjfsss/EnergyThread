@@ -167,4 +167,13 @@ public class TaskThread<Params, Progress, Result> extends AsyncTask<Params, Prog
     public void onProgressUpdate(Progress values) {
         publishProgress(values);
     }
+
+    public void clear(){
+        mDoInBackground = null;
+        if (mPostExecuteList != null) {
+            mPostExecuteList.clear();
+        }
+        mProgressUpdate = null;
+        paramList.clear();
+    }
 }

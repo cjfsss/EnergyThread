@@ -173,4 +173,9 @@ public class TaskLive<Params, Progress, Result> extends AsyncTask<Params, Progre
     public void onProgressUpdate(Progress values) {
         publishProgress(values);
     }
+
+    public void clear(){
+        mDoInBackground = null;
+        paramList.clear();
+    }
 }
