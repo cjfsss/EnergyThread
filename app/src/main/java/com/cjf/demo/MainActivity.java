@@ -11,7 +11,6 @@ import androidx.lifecycle.Observer;
 
 import com.cjf.demo.databinding.ActivityMainBinding;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;

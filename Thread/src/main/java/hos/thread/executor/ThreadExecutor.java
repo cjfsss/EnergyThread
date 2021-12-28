@@ -1,5 +1,7 @@
 package hos.thread.executor;
 
+import android.os.Handler;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -22,6 +24,20 @@ public abstract class ThreadExecutor {
     public abstract ExecutorService getMultiThread();
 
     public abstract ExecutorService getThread();
+
+    @NonNull
+    public abstract Handler getHandler();
+
+    @NonNull
+    public abstract Handler getHandlerMain(@Nullable Handler.Callback callback);
+
+    @NonNull
+    public abstract ThreadExecutor addHandlerCallback(@NonNull Handler.Callback callback);
+
+    @NonNull
+    public abstract ThreadExecutor removeHandlerCallback(@NonNull Handler.Callback callback);
+
+    public abstract void clear();
 
     /**
      * 延迟在主线程执行

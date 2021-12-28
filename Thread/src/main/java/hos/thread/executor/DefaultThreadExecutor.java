@@ -2,10 +2,13 @@ package hos.thread.executor;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -84,8 +87,12 @@ class DefaultThreadExecutor extends ThreadExecutor {
                     sBackupExecutor.execute(r);
                 }
             };
+
     @Nullable
     private volatile Handler mMainHandler;
+
+    @NonNull
+    private final List<Handler.Callback> mHandlerCallback = new LinkedList<Handler.Callback>();
 
     /**
      * 多线程池
@@ -115,43 +122,70 @@ class DefaultThreadExecutor extends ThreadExecutor {
         return mDiskIO;
     }
 
+    @NonNull
     @Override
-    public boolean postDelayed(@NonNull Runnable runnable, long delayMillis) {
+    public Handler getHandler() {
         if (mMainHandler == null) {
             synchronized (mLock) {
                 if (mMainHandler == null) {
-                    mMainHandler = new Handler(Looper.getMainLooper());
+                    mMainHandler = getHandlerMain(new Handler.Callback() {
+                        @Override
+                        public boolean handleMessage(@NonNull Message msg) {
+                            if (!mHandlerCallback.isEmpty()) {
+                                for (Handler.Callback callback : mHandlerCallback) {
+                                    callback.handleMessage(msg);
+                                }
+                            }
+                            return true;
+                        }
+                    });
                 }
             }
         }
         //noinspection ConstantConditions
-        return mMainHandler.postDelayed(runnable, delayMillis);
+        return mMainHandler;
+    }
+
+    @NonNull
+    @Override
+    public Handler getHandlerMain(Handler.Callback callback) {
+        return new Handler(Looper.getMainLooper(), callback);
+    }
+
+    @NonNull
+    @Override
+    public ThreadExecutor addHandlerCallback(@NonNull Handler.Callback callback) {
+        if (!mHandlerCallback.contains(callback)) {
+            mHandlerCallback.add(callback);
+        }
+        return this;
+    }
+
+    @NonNull
+    @Override
+    public ThreadExecutor removeHandlerCallback(@NonNull Handler.Callback callback) {
+        mHandlerCallback.remove(callback);
+        return this;
+    }
+
+    @Override
+    public void clear() {
+        mHandlerCallback.clear();
+    }
+
+    @Override
+    public boolean postDelayed(@NonNull Runnable runnable, long delayMillis) {
+        return getHandler().postDelayed(runnable, delayMillis);
     }
 
     @Override
     public boolean postAtTime(@NonNull Runnable runnable, long uptimeMillis) {
-        if (mMainHandler == null) {
-            synchronized (mLock) {
-                if (mMainHandler == null) {
-                    mMainHandler = new Handler(Looper.getMainLooper());
-                }
-            }
-        }
-        //noinspection ConstantConditions
-        return mMainHandler.postAtTime(runnable, uptimeMillis);
+        return getHandler().postAtTime(runnable, uptimeMillis);
     }
 
     @Override
     public void postToMain(@NonNull Runnable runnable) {
-        if (mMainHandler == null) {
-            synchronized (mLock) {
-                if (mMainHandler == null) {
-                    mMainHandler = new Handler(Looper.getMainLooper());
-                }
-            }
-        }
-        //noinspection ConstantConditions
-        mMainHandler.post(runnable);
+        getHandler().post(runnable);
     }
 
     @Override

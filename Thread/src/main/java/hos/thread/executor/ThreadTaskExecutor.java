@@ -1,5 +1,7 @@
 package hos.thread.executor;
 
+import android.os.Handler;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -97,6 +99,37 @@ public class ThreadTaskExecutor extends ThreadExecutor {
     @Override
     public ExecutorService getThread() {
         return mDelegate.getThread();
+    }
+
+    @NonNull
+    @Override
+    public Handler getHandler() {
+        return mDelegate.getHandler();
+    }
+
+    @NonNull
+    @Override
+    public Handler getHandlerMain(Handler.Callback callback) {
+        return mDelegate.getHandlerMain(callback);
+    }
+
+    @NonNull
+    @Override
+    public ThreadExecutor addHandlerCallback(@NonNull Handler.Callback callback) {
+        mDelegate.addHandlerCallback(callback);
+        return this;
+    }
+
+    @NonNull
+    @Override
+    public ThreadExecutor removeHandlerCallback(@NonNull Handler.Callback callback) {
+        mDelegate.removeHandlerCallback(callback);
+        return this;
+    }
+
+    @Override
+    public void clear() {
+        mDelegate.clear();
     }
 
     @Override
