@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding mActivityMainBinding;
 
     @NonNull
-    private ActivityMainBinding getActivityMainBinding() {
+    private ActivityMainBinding getBinding() {
         if (mActivityMainBinding == null) {
             return mActivityMainBinding = ActivityMainBinding.inflate(getLayoutInflater());
         }
@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(getActivityMainBinding().getRoot());
-        getActivityMainBinding().btnThread.setOnClickListener(new View.OnClickListener() {
+        setContentView(getBinding().getRoot());
+        getBinding().btnThread.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startThread();
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         List<TaskLive<String, Integer, Boolean>> list = new Vector<>();
         for (int i = 0; i < 100; i++) {
             list.add(new TaskLive<String, Integer, Boolean>()
-                    .setDoInBackground(new IDoInBackground<String,Integer,  Boolean>() {
+                    .setDoInBackground(new IDoInBackground<String, Integer, Boolean>() {
                         @Override
                         public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<String> strings) {
                             try {
@@ -97,13 +97,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(Integer progress) {
                         Log.i("TAG", "progress: " + progress);
-                        getActivityMainBinding().tvProgressInfo.setText("进度：" + progress);
+                        getBinding().tvProgressInfo.setText("进度：" + progress);
                     }
                 })
                 .startOnExecutor(this, new Observer<Boolean>() {
                     @Override
                     public void onChanged(Boolean isSuccess) {
-                        getActivityMainBinding().tvSuccessInfo.setText("是否成功：" + isSuccess);
+                        getBinding().tvSuccessInfo.setText("是否成功：" + isSuccess);
                     }
                 });
     }
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         List<TaskThread<String, Integer, Boolean>> list = new LinkedList<>();
         for (int i = 0; i < 1000; i++) {
             list.add(new TaskThread<String, Integer, Boolean>(i)
-                    .setDoInBackground(new IDoInBackground<String,Integer, Boolean>() {
+                    .setDoInBackground(new IDoInBackground<String, Integer, Boolean>() {
                         @Override
                         public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<String> strings) {
                             try {
@@ -140,13 +140,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onProgressUpdate(Integer progress) {
                         Log.i("TAG", "progress: " + progress);
-                        getActivityMainBinding().tvProgressInfo.setText("进度：" + progress);
+                        getBinding().tvProgressInfo.setText("进度：" + progress);
                     }
                 })
                 .startOnExecutor(new IPostExecute<Boolean>() {
                     @Override
                     public void onPostExecute(int index, @NonNull Boolean isSuccess) {
-                        getActivityMainBinding().tvSuccessInfo.setText("是否成功：" + isSuccess);
+                        getBinding().tvSuccessInfo.setText("是否成功：" + isSuccess);
                     }
                 });
     }

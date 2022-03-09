@@ -37,7 +37,7 @@ public abstract class ThreadExecutor {
     @NonNull
     public abstract ThreadExecutor removeHandlerCallback(@NonNull Handler.Callback callback);
 
-    public abstract void clear();
+    public abstract void clearCallback();
 
     /**
      * 延迟在主线程执行
@@ -82,6 +82,19 @@ public abstract class ThreadExecutor {
      * @param runnable 工作线程
      */
     public abstract void postIo(@NonNull final Runnable runnable);
+
+    /**
+     * 运行在工作线程
+     *
+     * @param runnable 工作线程
+     */
+    public void postOnIo(@NonNull final Runnable runnable) {
+        if (isMainThread()) {
+            postIo(runnable);
+        } else {
+            runnable.run();
+        }
+    }
 
     /**
      * Returns true if the current thread is the main thread, false otherwise.

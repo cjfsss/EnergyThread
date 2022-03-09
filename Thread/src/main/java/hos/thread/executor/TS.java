@@ -47,7 +47,7 @@ public final class TS {
     }
 
     public static void clear() {
-        ThreadTaskExecutor.getInstance().clear();
+        ThreadTaskExecutor.getInstance().clearCallback();
     }
 
     /**
@@ -85,11 +85,7 @@ public final class TS {
      * @param runnable 主线程
      */
     public static void postOnMain(@NonNull final Runnable runnable) {
-        if (isMainThread()) {
-            runnable.run();
-        } else {
-            postToMain(runnable);
-        }
+        ThreadTaskExecutor.getInstance().postOnMain(runnable);
     }
 
 
@@ -100,6 +96,15 @@ public final class TS {
      */
     public static void postIo(@NonNull final Runnable runnable) {
         ThreadTaskExecutor.getInstance().postIo(runnable);
+    }
+
+    /**
+     * 运行在工作线程
+     *
+     * @param runnable 工作线程
+     */
+    public static void postOnIo(@NonNull final Runnable runnable) {
+        ThreadTaskExecutor.getInstance().postOnIo(runnable);
     }
 
     /**

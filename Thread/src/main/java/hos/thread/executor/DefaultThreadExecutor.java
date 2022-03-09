@@ -169,7 +169,7 @@ class DefaultThreadExecutor extends ThreadExecutor {
     }
 
     @Override
-    public void clear() {
+    public void clearCallback() {
         mHandlerCallback.clear();
     }
 

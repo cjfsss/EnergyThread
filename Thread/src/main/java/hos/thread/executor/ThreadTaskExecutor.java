@@ -128,8 +128,8 @@ public class ThreadTaskExecutor extends ThreadExecutor {
     }
 
     @Override
-    public void clear() {
-        mDelegate.clear();
+    public void clearCallback() {
+        mDelegate.clearCallback();
     }
 
     @Override
