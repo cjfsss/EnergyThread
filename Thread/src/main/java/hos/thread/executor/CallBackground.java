@@ -27,7 +27,7 @@ public abstract class CallBackground<T> implements Runnable {
             @Override
             public void run() {
                 if (isCancel()){
-                    postOnCancel();
+                    onCancel();
                     return;
                 }
                 onPrepare();
