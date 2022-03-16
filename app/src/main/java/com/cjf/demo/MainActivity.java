@@ -17,13 +17,6 @@ import java.util.Random;
 import java.util.Vector;
 
 import hos.thread.executor.ThreadTaskExecutor;
-import hos.thread.interfaces.IDoInBackground;
-import hos.thread.interfaces.IPostExecute;
-import hos.thread.interfaces.IProgressUpdate;
-import hos.thread.task.TaskLive;
-import hos.thread.task.TaskLiveManager;
-import hos.thread.task.TaskManager;
-import hos.thread.task.TaskThread;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,13 +36,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getBinding().getRoot());
-        getBinding().btnThread.setOnClickListener(new View.OnClickListener() {
+//        getBinding().btnThread.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startThread();
+//            }
+//        });
+        // 工作线程
+        ThreadTaskExecutor.getInstance().postIo(1,() -> {
+
+        });
+        ThreadTaskExecutor.getInstance().postIo(1, new Runnable() {
             @Override
-            public void onClick(View v) {
-                startThread();
+            public void run() {
+                
             }
         });
-        // 工作线程
         ThreadTaskExecutor.getInstance()
                 .postIo(() -> {
 
@@ -61,93 +63,93 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void start() {
-        // 添加工作任务
-        List<TaskLive<String, Integer, Boolean>> list = new Vector<>();
-        for (int i = 0; i < 100; i++) {
-            list.add(new TaskLive<String, Integer, Boolean>()
-                    .setDoInBackground(new IDoInBackground<String, Integer, Boolean>() {
-                        @Override
-                        public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<String> strings) {
-                            try {
-                                Thread.sleep(3000);
-                                return true;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            return false;
-                        }
-                    })
-                    .setProgressUpdate(this, new Observer<Integer>() {
-                        @Override
-                        public void onChanged(Integer integer) {
-
-                        }
-                    })
-                    .setPostExecute(this, new Observer<Boolean>() {
-                        @Override
-                        public void onChanged(Boolean aBoolean) {
-
-                        }
-                    }));
-        }
-        // 添加单独线程记录并行线程状态
-        new TaskLiveManager<String, Integer, Boolean>().setTaskList(list)
-                .setProgressUpdate(this, new Observer<Integer>() {
-                    @Override
-                    public void onChanged(Integer progress) {
-                        Log.i("TAG", "progress: " + progress);
-                        getBinding().tvProgressInfo.setText("进度：" + progress);
-                    }
-                })
-                .startOnExecutor(this, new Observer<Boolean>() {
-                    @Override
-                    public void onChanged(Boolean isSuccess) {
-                        getBinding().tvSuccessInfo.setText("是否成功：" + isSuccess);
-                    }
-                });
-    }
-
-    private void startThread() {
-        // 添加工作任务
-        List<TaskThread<String, Integer, Boolean>> list = new LinkedList<>();
-        for (int i = 0; i < 1000; i++) {
-            list.add(new TaskThread<String, Integer, Boolean>(i)
-                    .setDoInBackground(new IDoInBackground<String, Integer, Boolean>() {
-                        @Override
-                        public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<String> strings) {
-                            try {
-                                Random random = new Random();
-                                int nextInt = random.nextInt(3);
-                                Thread.sleep(nextInt * 1000);
-                                return true;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            return false;
-                        }
-                    })
-                    .setPostExecute(new IPostExecute<Boolean>() {
-                        @Override
-                        public void onPostExecute(int index, @NonNull Boolean aBoolean) {
-
-                        }
-                    }));
-        }
-        // 添加单独线程记录并行线程状态
-        new TaskManager<String, Integer, Boolean>().setTaskList(list)
-                .setProgressUpdate(new IProgressUpdate<Integer>() {
-                    @Override
-                    public void onProgressUpdate(Integer progress) {
-                        Log.i("TAG", "progress: " + progress);
-                        getBinding().tvProgressInfo.setText("进度：" + progress);
-                    }
-                })
-                .startOnExecutor(new IPostExecute<Boolean>() {
-                    @Override
-                    public void onPostExecute(int index, @NonNull Boolean isSuccess) {
-                        getBinding().tvSuccessInfo.setText("是否成功：" + isSuccess);
-                    }
-                });
-    }
+//    private void start() {
+//        // 添加工作任务
+//        List<TaskLive<String, Integer, Boolean>> list = new Vector<>();
+//        for (int i = 0; i < 100; i++) {
+//            list.add(new TaskLive<String, Integer, Boolean>()
+//                    .setDoInBackground(new IDoInBackground<String, Integer, Boolean>() {
+//                        @Override
+//                        public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<String> strings) {
+//                            try {
+//                                Thread.sleep(3000);
+//                                return true;
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                            return false;
+//                        }
+//                    })
+//                    .setProgressUpdate(this, new Observer<Integer>() {
+//                        @Override
+//                        public void onChanged(Integer integer) {
+//
+//                        }
+//                    })
+//                    .setPostExecute(this, new Observer<Boolean>() {
+//                        @Override
+//                        public void onChanged(Boolean aBoolean) {
+//
+//                        }
+//                    }));
+//        }
+//        // 添加单独线程记录并行线程状态
+//        new TaskLiveManager<String, Integer, Boolean>().setTaskList(list)
+//                .setProgressUpdate(this, new Observer<Integer>() {
+//                    @Override
+//                    public void onChanged(Integer progress) {
+//                        Log.i("TAG", "progress: " + progress);
+//                        getBinding().tvProgressInfo.setText("进度：" + progress);
+//                    }
+//                })
+//                .startOnExecutor(this, new Observer<Boolean>() {
+//                    @Override
+//                    public void onChanged(Boolean isSuccess) {
+//                        getBinding().tvSuccessInfo.setText("是否成功：" + isSuccess);
+//                    }
+//                });
+//    }
+//
+//    private void startThread() {
+//        // 添加工作任务
+//        List<TaskThread<String, Integer, Boolean>> list = new LinkedList<>();
+//        for (int i = 0; i < 1000; i++) {
+//            list.add(new TaskThread<String, Integer, Boolean>(i)
+//                    .setDoInBackground(new IDoInBackground<String, Integer, Boolean>() {
+//                        @Override
+//                        public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<String> strings) {
+//                            try {
+//                                Random random = new Random();
+//                                int nextInt = random.nextInt(3);
+//                                Thread.sleep(nextInt * 1000);
+//                                return true;
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                            return false;
+//                        }
+//                    })
+//                    .setPostExecute(new IPostExecute<Boolean>() {
+//                        @Override
+//                        public void onPostExecute(int index, @NonNull Boolean aBoolean) {
+//
+//                        }
+//                    }));
+//        }
+//        // 添加单独线程记录并行线程状态
+//        new TaskManager<String, Integer, Boolean>().setTaskList(list)
+//                .setProgressUpdate(new IProgressUpdate<Integer>() {
+//                    @Override
+//                    public void onProgressUpdate(Integer progress) {
+//                        Log.i("TAG", "progress: " + progress);
+//                        getBinding().tvProgressInfo.setText("进度：" + progress);
+//                    }
+//                })
+//                .startOnExecutor(new IPostExecute<Boolean>() {
+//                    @Override
+//                    public void onPostExecute(int index, @NonNull Boolean isSuccess) {
+//                        getBinding().tvSuccessInfo.setText("是否成功：" + isSuccess);
+//                    }
+//                });
+//    }
 }

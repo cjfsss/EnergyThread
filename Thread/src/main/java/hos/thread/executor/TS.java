@@ -2,6 +2,7 @@ package hos.thread.executor;
 
 import android.os.Handler;
 
+import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -103,6 +104,15 @@ public final class TS {
      *
      * @param runnable 工作线程
      */
+    public void postIo(@IntRange(from = 0, to = 10) int priority, @NonNull final Runnable runnable) {
+        ThreadTaskExecutor.getInstance().postIo(priority, runnable);
+    }
+
+    /**
+     * 运行在工作线程
+     *
+     * @param runnable 工作线程
+     */
     public static void postOnIo(@NonNull final Runnable runnable) {
         ThreadTaskExecutor.getInstance().postOnIo(runnable);
     }
@@ -126,6 +136,14 @@ public final class TS {
 
     public static Future<?> submit(Runnable task) {
         return ThreadTaskExecutor.getInstance().submit(task);
+    }
+
+    public <T> Future<T> submit(@IntRange(from = 0, to = 10) int priority, Runnable task, T result) {
+        return ThreadTaskExecutor.getInstance().submit(priority, task, result);
+    }
+
+    public Future<?> submit(@IntRange(from = 0, to = 10) int priority, Runnable task) {
+        return ThreadTaskExecutor.getInstance().submit(priority, task);
     }
 
     public static void removeCallbacks(@NonNull Runnable r) {

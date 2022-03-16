@@ -2,11 +2,11 @@ package hos.thread.executor;
 
 import android.os.Handler;
 
+import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -81,7 +81,16 @@ public abstract class ThreadExecutor {
      *
      * @param runnable 工作线程
      */
-    public abstract void postIo(@NonNull final Runnable runnable);
+    public void postIo(@NonNull final Runnable runnable) {
+        postIo(0, runnable);
+    }
+
+    /**
+     * 运行在工作线程
+     *
+     * @param runnable 工作线程
+     */
+    public abstract void postIo(@IntRange(from = 0, to = 10) int priority, @NonNull final Runnable runnable);
 
     /**
      * 运行在工作线程
@@ -105,9 +114,17 @@ public abstract class ThreadExecutor {
 
     public abstract <T> Future<T> submit(Callable<T> task);
 
-    public abstract <T> Future<T> submit(Runnable task, T result);
+    public <T> Future<T> submit(Runnable task, T result) {
+        return submit(0, task, result);
+    }
 
-    public abstract Future<?> submit(Runnable task);
+    public Future<?> submit(Runnable task) {
+        return submit(0, task);
+    }
+
+    public abstract <T> Future<T> submit(@IntRange(from = 0, to = 10) int priority, Runnable task, T result);
+
+    public abstract Future<?> submit(@IntRange(from = 0, to = 10) int priority, Runnable task);
 
     public abstract void removeCallbacks(@NonNull Runnable r);
 

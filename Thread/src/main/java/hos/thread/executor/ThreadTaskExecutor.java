@@ -26,7 +26,7 @@ public class ThreadTaskExecutor extends ThreadExecutor {
     private ThreadExecutor mDelegate;
 
     @NonNull
-    private ThreadExecutor mDefaultTaskExecutor;
+    private final ThreadExecutor mDefaultTaskExecutor;
 
     @NonNull
     private static final Executor sMainThreadExecutor = new Executor() {
@@ -153,6 +153,11 @@ public class ThreadTaskExecutor extends ThreadExecutor {
     }
 
     @Override
+    public void postIo(int priority, @NonNull Runnable runnable) {
+        mDelegate.postIo(priority, runnable);
+    }
+
+    @Override
     public boolean isMainThread() {
         return mDelegate.isMainThread();
     }
@@ -170,6 +175,16 @@ public class ThreadTaskExecutor extends ThreadExecutor {
     @Override
     public Future<?> submit(Runnable task) {
         return mDelegate.submit(task);
+    }
+
+    @Override
+    public <T> Future<T> submit(int priority, Runnable task, T result) {
+        return mDelegate.submit(priority, task, result);
+    }
+
+    @Override
+    public Future<?> submit(int priority, Runnable task) {
+        return mDelegate.submit(priority, task);
     }
 
     @Override

@@ -11,9 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
@@ -44,18 +44,22 @@ class DefaultThreadExecutor extends ThreadExecutor {
 
     private final Object mLock = new Object();
 
-    private final ExecutorService mDiskIO = Executors.newFixedThreadPool(2, new ThreadFactory() {
-        private static final String THREAD_NAME_STEM = "hos_disk_io_%d";
 
-        private final AtomicInteger mThreadId = new AtomicInteger(0);
+    private final ExecutorService mDiskIO = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE,
+            30L, TimeUnit.SECONDS,
+            new PriorityBlockingQueue<Runnable>(),
+            new ThreadFactory() {
+                private static final String THREAD_NAME_STEM = "hos_disk_io_%d";
 
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(r);
-            t.setName(String.format(THREAD_NAME_STEM, mThreadId.getAndIncrement()));
-            return t;
-        }
-    });
+                private final AtomicInteger mThreadId = new AtomicInteger(0);
+
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread t = new Thread(r);
+                    t.setName(String.format(THREAD_NAME_STEM, mThreadId.getAndIncrement()));
+                    return t;
+                }
+            });
 
     private static final ThreadFactory sThreadFactory = new ThreadFactory() {
         private final AtomicInteger mCount = new AtomicInteger(1);
@@ -189,8 +193,8 @@ class DefaultThreadExecutor extends ThreadExecutor {
     }
 
     @Override
-    public void postIo(@NonNull Runnable runnable) {
-        mDiskIO.execute(runnable);
+    public void postIo(int priority, @NonNull Runnable runnable) {
+        mDiskIO.execute(new PriorityRunnable(priority, runnable));
     }
 
     @Override
@@ -204,13 +208,13 @@ class DefaultThreadExecutor extends ThreadExecutor {
     }
 
     @Override
-    public <T> Future<T> submit(Runnable task, T result) {
-        return mDiskIO.submit(task, result);
+    public <T> Future<T> submit(int priority, Runnable task, T result) {
+        return mDiskIO.submit(new PriorityRunnable(priority, task), result);
     }
 
     @Override
-    public Future<?> submit(Runnable task) {
-        return mDiskIO.submit(task);
+    public Future<?> submit(int priority, Runnable task) {
+        return mDiskIO.submit(new PriorityRunnable(priority, task));
     }
 
     @Override
