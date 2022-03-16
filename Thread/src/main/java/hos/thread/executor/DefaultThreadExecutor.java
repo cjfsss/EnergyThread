@@ -2,13 +2,10 @@ package hos.thread.executor;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -95,9 +92,6 @@ class DefaultThreadExecutor extends ThreadExecutor {
     @Nullable
     private volatile Handler mMainHandler;
 
-    @NonNull
-    private final List<Handler.Callback> mHandlerCallback = new LinkedList<Handler.Callback>();
-
     /**
      * 多线程池
      */
@@ -132,17 +126,7 @@ class DefaultThreadExecutor extends ThreadExecutor {
         if (mMainHandler == null) {
             synchronized (mLock) {
                 if (mMainHandler == null) {
-                    mMainHandler = getHandlerMain(new Handler.Callback() {
-                        @Override
-                        public boolean handleMessage(@NonNull Message msg) {
-                            if (!mHandlerCallback.isEmpty()) {
-                                for (Handler.Callback callback : mHandlerCallback) {
-                                    callback.handleMessage(msg);
-                                }
-                            }
-                            return true;
-                        }
-                    });
+                    mMainHandler = getHandlerMain(null);
                 }
             }
         }
@@ -152,29 +136,13 @@ class DefaultThreadExecutor extends ThreadExecutor {
 
     @NonNull
     @Override
-    public Handler getHandlerMain(Handler.Callback callback) {
+    public Handler getHandlerMain(@Nullable Handler.Callback callback) {
         return new Handler(Looper.getMainLooper(), callback);
-    }
-
-    @NonNull
-    @Override
-    public ThreadExecutor addHandlerCallback(@NonNull Handler.Callback callback) {
-        if (!mHandlerCallback.contains(callback)) {
-            mHandlerCallback.add(callback);
-        }
-        return this;
-    }
-
-    @NonNull
-    @Override
-    public ThreadExecutor removeHandlerCallback(@NonNull Handler.Callback callback) {
-        mHandlerCallback.remove(callback);
-        return this;
     }
 
     @Override
     public void clearCallback() {
-        mHandlerCallback.clear();
+        getHandler().removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -217,19 +185,4 @@ class DefaultThreadExecutor extends ThreadExecutor {
         return mDiskIO.submit(new PriorityRunnable(priority, task));
     }
 
-    @Override
-    public void removeCallbacks(@NonNull Runnable r) {
-        if (mMainHandler == null) {
-            return;
-        }
-        mMainHandler.removeCallbacks(r);
-    }
-
-    @Override
-    public void removeCallbacks(@NonNull Runnable r, @Nullable Object token) {
-        if (mMainHandler == null) {
-            return;
-        }
-        mMainHandler.removeCallbacks(r, token);
-    }
 }

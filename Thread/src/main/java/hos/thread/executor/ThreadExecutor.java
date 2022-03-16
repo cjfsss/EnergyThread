@@ -31,12 +31,6 @@ public abstract class ThreadExecutor {
     @NonNull
     public abstract Handler getHandlerMain(@Nullable Handler.Callback callback);
 
-    @NonNull
-    public abstract ThreadExecutor addHandlerCallback(@NonNull Handler.Callback callback);
-
-    @NonNull
-    public abstract ThreadExecutor removeHandlerCallback(@NonNull Handler.Callback callback);
-
     public abstract void clearCallback();
 
     /**
@@ -126,7 +120,4 @@ public abstract class ThreadExecutor {
 
     public abstract Future<?> submit(@IntRange(from = 0, to = 10) int priority, Runnable task);
 
-    public abstract void removeCallbacks(@NonNull Runnable r);
-
-    public abstract void removeCallbacks(@NonNull Runnable r, @Nullable Object token);
 }

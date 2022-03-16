@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
+import hos.thread.executor.CallBackground;
 import hos.thread.executor.ThreadTaskExecutor;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         ThreadTaskExecutor.getInstance().postIo(1, new Runnable() {
             @Override
             public void run() {
-                
+
             }
         });
         ThreadTaskExecutor.getInstance()
@@ -61,6 +62,23 @@ public class MainActivity extends AppCompatActivity {
                 .postToMain(() -> {
 
                 });
+        ThreadTaskExecutor.getInstance().postIo(new CallBackground<String>() {
+            @Nullable
+            @Override
+            protected String onBackground() {
+                return null;
+            }
+
+            @Override
+            protected void onCompleted(@Nullable  String s) {
+
+            }
+
+            @Override
+            protected void onError(@NonNull Throwable e) {
+
+            }
+        });
     }
 
 //    private void start() {

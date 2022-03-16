@@ -113,20 +113,6 @@ public class ThreadTaskExecutor extends ThreadExecutor {
         return mDelegate.getHandlerMain(callback);
     }
 
-    @NonNull
-    @Override
-    public ThreadExecutor addHandlerCallback(@NonNull Handler.Callback callback) {
-        mDelegate.addHandlerCallback(callback);
-        return this;
-    }
-
-    @NonNull
-    @Override
-    public ThreadExecutor removeHandlerCallback(@NonNull Handler.Callback callback) {
-        mDelegate.removeHandlerCallback(callback);
-        return this;
-    }
-
     @Override
     public void clearCallback() {
         mDelegate.clearCallback();
@@ -187,19 +173,4 @@ public class ThreadTaskExecutor extends ThreadExecutor {
         return mDelegate.submit(priority, task);
     }
 
-    @Override
-    public void removeCallbacks(@NonNull Runnable r) {
-        if (mDelegate == null) {
-            return;
-        }
-        mDelegate.removeCallbacks(r);
-    }
-
-    @Override
-    public void removeCallbacks(@NonNull Runnable r, @Nullable Object token) {
-        if (mDelegate == null) {
-            return;
-        }
-        mDelegate.removeCallbacks(r, token);
-    }
 }

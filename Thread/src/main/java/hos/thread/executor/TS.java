@@ -37,16 +37,6 @@ public final class TS {
         return ThreadTaskExecutor.getInstance().getHandlerMain(callback);
     }
 
-    @NonNull
-    public static ThreadExecutor addHandlerCallback(@NonNull Handler.Callback callback) {
-        return ThreadTaskExecutor.getInstance().addHandlerCallback(callback);
-    }
-
-    @NonNull
-    public static ThreadExecutor removeHandlerCallback(@NonNull Handler.Callback callback) {
-        return ThreadTaskExecutor.getInstance().removeHandlerCallback(callback);
-    }
-
     public static void clear() {
         ThreadTaskExecutor.getInstance().clearCallback();
     }
@@ -146,11 +136,4 @@ public final class TS {
         return ThreadTaskExecutor.getInstance().submit(priority, task);
     }
 
-    public static void removeCallbacks(@NonNull Runnable r) {
-        ThreadTaskExecutor.getInstance().removeCallbacks(r);
-    }
-
-    public static void removeCallbacks(@NonNull Runnable r, @Nullable Object token) {
-        ThreadTaskExecutor.getInstance().removeCallbacks(r, token);
-    }
 }
