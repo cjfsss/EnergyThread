@@ -73,10 +73,10 @@ public class TaskRuntimeListener implements TaskListener {
 
         long startTime = taskRuntimeInfo.getStateTime(TaskStatus.START);
         long runningTime = taskRuntimeInfo.getStateTime(TaskStatus.RUNNING);
-        long errorTime = taskRuntimeInfo.getStateTime(TaskStatus.ERROR);
+        Long errorTime = taskRuntimeInfo.getStateTime(TaskStatus.ERROR);
         long finishedTime = taskRuntimeInfo.getStateTime(TaskStatus.FINISHED);
         Throwable throwable = taskRuntimeInfo.getThrowable();
-        String message = "";
+        String message = null;
         if (throwable != null) {
             message = throwable.getMessage();
         }
@@ -100,10 +100,14 @@ public class TaskRuntimeListener implements TaskListener {
         addTaskInfoLineInfo(builder, THREAD_NAME, taskRuntimeInfo.getThreadName());
         addTaskInfoLineInfo(builder, START_TIME, startTime + "ms");
         addTaskInfoLineInfo(builder, WAITING_TIME, (runningTime - startTime) + "ms");
-        addTaskInfoLineInfo(builder, ERROR_TIME, (errorTime - runningTime) + "ms");
+        if (errorTime != null) {
+            addTaskInfoLineInfo(builder, ERROR_TIME, (errorTime - runningTime) + "ms");
+        }
         addTaskInfoLineInfo(builder, TASK_CONSUME, (finishedTime - runningTime) + "ms");
         addTaskInfoLineInfo(builder, IS_SUCCESS, String.valueOf(task.isSuccessFul()));
-        addTaskInfoLineInfo(builder, ERROR_INFO, message);
+        if (message != null) {
+            addTaskInfoLineInfo(builder, ERROR_INFO, message);
+        }
         addTaskInfoLineInfo(builder, FINISHED_TIME, finishedTime + "ms");
         builder.append(HALF_LINE + HALF_LINE + HALF_LINE + HALF_LINE);
         builder.append(WRAPPER);
