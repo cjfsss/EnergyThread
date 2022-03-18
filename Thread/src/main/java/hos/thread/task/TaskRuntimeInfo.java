@@ -19,6 +19,7 @@ class TaskRuntimeInfo {
     private final SparseArray<Long> stateTime = new SparseArray<Long>();
     private boolean isBlockTask = false;
     private String threadName;
+    private Throwable throwable;
     private final Task task;
 
     public TaskRuntimeInfo(@NonNull Task task) {
@@ -58,12 +59,21 @@ class TaskRuntimeInfo {
         return threadName;
     }
 
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
+    }
+
     @Override
     public String toString() {
         return "TaskRuntimeInfo{" +
                 "stateTime=" + stateTime +
                 ", isBlockTask=" + isBlockTask +
                 ", threadName='" + threadName + '\'' +
+                ", throwable=" + throwable +
                 ", task=" + task +
                 '}';
     }

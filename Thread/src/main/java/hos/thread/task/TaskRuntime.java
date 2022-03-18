@@ -93,6 +93,9 @@ class TaskRuntime {
     public static void setStateInfo(@NonNull Task task) {
         TaskRuntimeInfo taskRuntimeInfo = getTaskRuntimeInfo(task.getId());
         if (taskRuntimeInfo != null) {
+            if (task.getThrowable() != null) {
+                taskRuntimeInfo.setThrowable(task.getThrowable());
+            }
             taskRuntimeInfo.setStateTime(task.getState(), System.currentTimeMillis());
         }
     }

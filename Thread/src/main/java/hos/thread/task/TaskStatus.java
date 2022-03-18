@@ -18,5 +18,6 @@ public interface TaskStatus {
     int IDLE = 0;// 静止
     int START = 1;// 开始
     int RUNNING = 2;// 运行
-    int FINISHED = 3;// 结束
+    int ERROR = 3;// 错误
+    int FINISHED = 4;// 结束
 }

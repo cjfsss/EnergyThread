@@ -29,8 +29,10 @@ public class TaskRuntimeListener implements TaskListener {
     static final String START_TIME = "开始执行时刻";
     static final String WAITING_TIME = "等待执行耗时";
     static final String TASK_CONSUME = "任务执行耗时";
+    static final String ERROR_TIME = "错误耗时";
     static final String IS_BLOCK_TASK = "是否是阻塞任务";
     static final String IS_SUCCESS = "是否成功";
+    static final String ERROR_INFO = "错误信息";
     static final String FINISHED_TIME = "任务结束时刻";
     static final String WRAPPER = "\n";
     static final String HALF_LINE = "==================";
@@ -71,7 +73,13 @@ public class TaskRuntimeListener implements TaskListener {
 
         long startTime = taskRuntimeInfo.getStateTime(TaskStatus.START);
         long runningTime = taskRuntimeInfo.getStateTime(TaskStatus.RUNNING);
+        long errorTime = taskRuntimeInfo.getStateTime(TaskStatus.ERROR);
         long finishedTime = taskRuntimeInfo.getStateTime(TaskStatus.FINISHED);
+        Throwable throwable = taskRuntimeInfo.getThrowable();
+        String message = "";
+        if (throwable != null) {
+            message = throwable.getMessage();
+        }
         StringBuilder builder = new StringBuilder();
         builder.append(WRAPPER);
         builder.append(TAG);
@@ -92,8 +100,10 @@ public class TaskRuntimeListener implements TaskListener {
         addTaskInfoLineInfo(builder, THREAD_NAME, taskRuntimeInfo.getThreadName());
         addTaskInfoLineInfo(builder, START_TIME, startTime + "ms");
         addTaskInfoLineInfo(builder, WAITING_TIME, (runningTime - startTime) + "ms");
+        addTaskInfoLineInfo(builder, ERROR_TIME, (errorTime - runningTime) + "ms");
         addTaskInfoLineInfo(builder, TASK_CONSUME, (finishedTime - runningTime) + "ms");
         addTaskInfoLineInfo(builder, IS_SUCCESS, String.valueOf(task.isSuccessFul()));
+        addTaskInfoLineInfo(builder, ERROR_INFO, message);
         addTaskInfoLineInfo(builder, FINISHED_TIME, finishedTime + "ms");
         builder.append(HALF_LINE + HALF_LINE + HALF_LINE + HALF_LINE);
         builder.append(WRAPPER);

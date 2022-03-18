@@ -317,6 +317,8 @@ public abstract class Task implements Runnable, Comparable<Task> {
     }
 
     private void toError() {
+        state = TaskStatus.ERROR;
+        TaskRuntime.setStateInfo(this);
         for (TaskListener listener : taskListeners) {
             listener.onError(this);
         }
