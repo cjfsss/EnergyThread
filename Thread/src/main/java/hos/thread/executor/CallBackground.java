@@ -118,7 +118,7 @@ public abstract class CallBackground<T> implements Runnable {
      * @return 返回结果
      */
     @Nullable
-    protected abstract T onBackground();
+    protected abstract T onBackground() throws Exception;
 
     /**
      * 执行完成

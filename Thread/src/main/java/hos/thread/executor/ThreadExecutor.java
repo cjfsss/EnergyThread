@@ -120,4 +120,8 @@ public abstract class ThreadExecutor {
 
     public abstract Future<?> submit(@IntRange(from = 0, to = 10) int priority, Runnable task);
 
+    public abstract void pause();
+
+    public abstract void resume();
+
 }

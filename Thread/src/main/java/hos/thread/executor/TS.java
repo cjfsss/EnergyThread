@@ -94,7 +94,7 @@ public final class TS {
      *
      * @param runnable 工作线程
      */
-    public void postIo(@IntRange(from = 0, to = 10) int priority, @NonNull final Runnable runnable) {
+    public static void postIo(@IntRange(from = 0, to = 10) int priority, @NonNull final Runnable runnable) {
         ThreadTaskExecutor.getInstance().postIo(priority, runnable);
     }
 
@@ -128,12 +128,19 @@ public final class TS {
         return ThreadTaskExecutor.getInstance().submit(task);
     }
 
-    public <T> Future<T> submit(@IntRange(from = 0, to = 10) int priority, Runnable task, T result) {
+    public static <T> Future<T> submit(@IntRange(from = 0, to = 10) int priority, Runnable task, T result) {
         return ThreadTaskExecutor.getInstance().submit(priority, task, result);
     }
 
-    public Future<?> submit(@IntRange(from = 0, to = 10) int priority, Runnable task) {
+    public static Future<?> submit(@IntRange(from = 0, to = 10) int priority, Runnable task) {
         return ThreadTaskExecutor.getInstance().submit(priority, task);
     }
 
+    public static void pause() {
+        ThreadTaskExecutor.getInstance().pause();
+    }
+
+    public static void resume() {
+        ThreadTaskExecutor.getInstance().resume();
+    }
 }

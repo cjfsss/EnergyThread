@@ -22,6 +22,10 @@ class PriorityRunnable implements Runnable, Comparable<PriorityRunnable> {
         this.runnable = runnable;
     }
 
+    int getPriority() {
+        return priority;
+    }
+
     @Override
     public void run() {
         runnable.run();

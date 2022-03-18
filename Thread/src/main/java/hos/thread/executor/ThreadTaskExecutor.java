@@ -173,4 +173,14 @@ public class ThreadTaskExecutor extends ThreadExecutor {
         return mDelegate.submit(priority, task);
     }
 
+    @Override
+    public void pause() {
+        mDelegate.pause();
+    }
+
+    @Override
+    public void resume() {
+        mDelegate.resume();
+    }
+
 }
