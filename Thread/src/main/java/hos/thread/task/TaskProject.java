@@ -133,6 +133,9 @@ public class TaskProject extends Task {
         @NonNull
         private Builder dependOn(@NonNull Task task) {
             // 确定刚才我们添加进来的  mCurrentAddTask  和task 的依赖关系 ------- mCurrentAddTask依赖于task
+            if (mCurrentAddTask == null) {
+                throw new RuntimeException(" please call Builder.add() ");
+            }
             task.behind(mCurrentAddTask);
             // start --task10 --mCurrentAddTask(task  11) end
             mEndTask.removeDependence(task);
