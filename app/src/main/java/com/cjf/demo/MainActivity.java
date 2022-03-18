@@ -75,9 +75,19 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    protected String onBackground() throws Exception  {
-                        Thread.sleep(2000);
+                    protected String onBackground() throws Exception {
+                        for (int i = 0; i < 100; i++) {
+                            Thread.sleep(800 + new Random().nextInt(1000));
+                            progressUpdate(i);
+                        }
                         return "工作线程（成功）";
+                    }
+
+                    @Override
+                    protected void onProgressUpdate(int value) {
+                        super.onProgressUpdate(value);
+                        getBinding().btnThreadIO.setText("工作线程（" + value + "）");
+                        getBinding().progressHorizontalIo.setProgress(value);
                     }
 
                     @Override
