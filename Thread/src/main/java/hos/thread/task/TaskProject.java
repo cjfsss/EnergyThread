@@ -162,6 +162,11 @@ public class TaskProject extends Task {
 
         @NonNull
         public static TaskProject concurrence(@NonNull String projectName, @NonNull Task... taskList) {
+            return concurrence(projectName, Arrays.asList(taskList));
+        }
+
+        @NonNull
+        public static TaskProject concurrence(@NonNull String projectName, @NonNull List<Task> taskList) {
             ITaskCreator taskCreator = new ITaskCreator() {
                 @NonNull
                 @Override
@@ -171,7 +176,7 @@ public class TaskProject extends Task {
                             return task;
                         }
                     }
-                    return taskList[taskList.length - 1];
+                    return taskList.get(taskList.size() - 1);
                 }
             };
             Builder builder = new Builder(projectName, taskCreator);

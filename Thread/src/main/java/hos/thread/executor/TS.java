@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+import hos.thread.hander.MainHandler;
+
 /**
  * <p>Title: ThreadStatic </p>
  * <p>Description: 线程静态方法 </p>
@@ -28,17 +30,19 @@ public final class TS {
     }
 
     @NonNull
+    @Deprecated
     public static Handler getHandler() {
-        return ThreadTaskExecutor.getInstance().getHandler();
+        return MainHandler.getInstance().getHandler();
     }
 
     @NonNull
+    @Deprecated
     public static Handler getHandlerMain(@Nullable Handler.Callback callback) {
-        return ThreadTaskExecutor.getInstance().getHandlerMain(callback);
+        return MainHandler.getInstance().getHandlerMain(callback);
     }
-
+    @Deprecated
     public static void clear() {
-        ThreadTaskExecutor.getInstance().clearCallback();
+        MainHandler.getInstance().clearCallback();
     }
 
     /**
@@ -47,8 +51,9 @@ public final class TS {
      * @param runnable    运行
      * @param delayMillis 延迟时间
      */
+    @Deprecated
     public static boolean postDelayed(@NonNull final Runnable runnable, final long delayMillis) {
-        return ThreadTaskExecutor.getInstance().postDelayed(runnable, delayMillis);
+        return MainHandler.getInstance().postDelayed(runnable, delayMillis);
     }
 
     /**
@@ -57,8 +62,9 @@ public final class TS {
      * @param runnable     主线程
      * @param uptimeMillis 设定时间
      */
+    @Deprecated
     public static boolean postAtTime(@NonNull final Runnable runnable, final long uptimeMillis) {
-        return ThreadTaskExecutor.getInstance().postAtTime(runnable, uptimeMillis);
+        return MainHandler.getInstance().postAtTime(runnable, uptimeMillis);
     }
 
     /**
@@ -66,8 +72,9 @@ public final class TS {
      *
      * @param runnable 主线程
      */
+    @Deprecated
     public static void postToMain(@NonNull final Runnable runnable) {
-        ThreadTaskExecutor.getInstance().postToMain(runnable);
+        MainHandler.getInstance().postToMain(runnable);
     }
 
     /**
@@ -75,10 +82,20 @@ public final class TS {
      *
      * @param runnable 主线程
      */
+    @Deprecated
     public static void postOnMain(@NonNull final Runnable runnable) {
-        ThreadTaskExecutor.getInstance().postOnMain(runnable);
+        MainHandler.getInstance().postOnMain(runnable);
     }
 
+    /**
+     * Returns true if the current thread is the main thread, false otherwise.
+     *
+     * @return true if we are on the main thread, false otherwise.
+     */
+    @Deprecated
+    public static boolean isMainThread() {
+        return MainHandler.getInstance().isMainThread();
+    }
 
     /**
      * 运行在工作线程
@@ -105,15 +122,6 @@ public final class TS {
      */
     public static void postOnIo(@NonNull final Runnable runnable) {
         ThreadTaskExecutor.getInstance().postOnIo(runnable);
-    }
-
-    /**
-     * Returns true if the current thread is the main thread, false otherwise.
-     *
-     * @return true if we are on the main thread, false otherwise.
-     */
-    public static boolean isMainThread() {
-        return ThreadTaskExecutor.getInstance().isMainThread();
     }
 
     public static <T> Future<T> submit(Callable<T> task) {

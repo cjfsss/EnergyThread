@@ -211,7 +211,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
         }
     }
 
-    private void recycle() {
+    protected void recycle() {
         dependTasks.clear();
         behindTasks.clear();
         taskListeners.clear();

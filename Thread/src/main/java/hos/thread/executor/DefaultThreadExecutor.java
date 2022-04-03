@@ -2,6 +2,7 @@ package hos.thread.executor;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,10 +11,7 @@ import androidx.annotation.Nullable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -43,8 +41,6 @@ class DefaultThreadExecutor extends ThreadExecutor {
 //    private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
 //    private static final int KEEP_ALIVE_SECONDS = 3;
 //    private static final int BACKUP_POOL_SIZE = 5;
-
-    private final Object mLock = new Object();
 
     private boolean isPaused = false;
     private final ReentrantLock lock = new ReentrantLock();
@@ -129,8 +125,6 @@ class DefaultThreadExecutor extends ThreadExecutor {
 //                }
 //            };
 
-    @Nullable
-    private volatile Handler mMainHandler;
 
 //    /**
 //     * 多线程池
@@ -161,54 +155,9 @@ class DefaultThreadExecutor extends ThreadExecutor {
         return mDiskIO;
     }
 
-    @NonNull
-    @Override
-    public Handler getHandler() {
-        if (mMainHandler == null) {
-            synchronized (mLock) {
-                if (mMainHandler == null) {
-                    mMainHandler = getHandlerMain(null);
-                }
-            }
-        }
-        //noinspection ConstantConditions
-        return mMainHandler;
-    }
-
-    @NonNull
-    @Override
-    public Handler getHandlerMain(@Nullable Handler.Callback callback) {
-        return new Handler(Looper.getMainLooper(), callback);
-    }
-
-    @Override
-    public void clearCallback() {
-        getHandler().removeCallbacksAndMessages(null);
-    }
-
-    @Override
-    public boolean postDelayed(@NonNull Runnable runnable, long delayMillis) {
-        return getHandler().postDelayed(runnable, delayMillis);
-    }
-
-    @Override
-    public boolean postAtTime(@NonNull Runnable runnable, long uptimeMillis) {
-        return getHandler().postAtTime(runnable, uptimeMillis);
-    }
-
-    @Override
-    public void postToMain(@NonNull Runnable runnable) {
-        getHandler().post(runnable);
-    }
-
     @Override
     public void postIo(int priority, @NonNull Runnable runnable) {
         mDiskIO.execute(new PriorityRunnable(priority, runnable));
-    }
-
-    @Override
-    public boolean isMainThread() {
-        return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 
     @Override
@@ -239,6 +188,7 @@ class DefaultThreadExecutor extends ThreadExecutor {
             Log.e(LOG_TAG, "is paused");
         }
     }
+
     @Override
     public void resume() {
         lock.lock();

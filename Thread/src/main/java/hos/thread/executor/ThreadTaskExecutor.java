@@ -101,38 +101,6 @@ public class ThreadTaskExecutor extends ThreadExecutor {
         return mDelegate.getThread();
     }
 
-    @NonNull
-    @Override
-    public Handler getHandler() {
-        return mDelegate.getHandler();
-    }
-
-    @NonNull
-    @Override
-    public Handler getHandlerMain(Handler.Callback callback) {
-        return mDelegate.getHandlerMain(callback);
-    }
-
-    @Override
-    public void clearCallback() {
-        mDelegate.clearCallback();
-    }
-
-    @Override
-    public boolean postDelayed(@NonNull Runnable runnable, long delayMillis) {
-        return mDelegate.postDelayed(runnable, delayMillis);
-    }
-
-    @Override
-    public boolean postAtTime(@NonNull Runnable runnable, long uptimeMillis) {
-        return mDelegate.postAtTime(runnable, uptimeMillis);
-    }
-
-    @Override
-    public void postToMain(@NonNull Runnable runnable) {
-        mDelegate.postToMain(runnable);
-    }
-
     @Override
     public void postIo(@NonNull Runnable runnable) {
         mDelegate.postIo(runnable);
@@ -141,11 +109,6 @@ public class ThreadTaskExecutor extends ThreadExecutor {
     @Override
     public void postIo(int priority, @NonNull Runnable runnable) {
         mDelegate.postIo(priority, runnable);
-    }
-
-    @Override
-    public boolean isMainThread() {
-        return mDelegate.isMainThread();
     }
 
     @Override
