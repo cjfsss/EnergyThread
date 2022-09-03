@@ -3,19 +3,12 @@ package hos.thread.task;
 import android.os.Looper;
 import android.util.Log;
 
-import androidx.annotation.MainThread;
-
-
-
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import hos.thread.BuildConfig;
-import hos.thread.executor.CallBackground;
 import hos.thread.executor.ThreadTaskExecutor;
 
 /**
@@ -69,13 +62,12 @@ public class TaskFlowManager {
         return isFinish;
     }
 
-    @MainThread
     public void start(Task task) {
         start(task, null);
     }
 
     //project任务组，也有可能是独立的-个task
-    @MainThread
+    
     public void start(Task task,  TaskListener.ProgressUpdate progressUpdate) {
         if (!isFinish()) {
             // 还没有结束，运行时
