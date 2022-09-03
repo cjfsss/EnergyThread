@@ -2,10 +2,6 @@ package hos.thread.executor;
 
 import android.os.Handler;
 
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
@@ -25,19 +21,19 @@ public final class TS {
     private TS() {
     }
 
-    public static void setDelegate(@Nullable ThreadExecutor taskExecutor) {
+    public static void setDelegate( ThreadExecutor taskExecutor) {
         ThreadTaskExecutor.getInstance().setDelegate(taskExecutor);
     }
 
-    @NonNull
+    
     @Deprecated
     public static Handler getHandler() {
         return MainHandler.getInstance().getHandler();
     }
 
-    @NonNull
+    
     @Deprecated
-    public static Handler getHandlerMain(@Nullable Handler.Callback callback) {
+    public static Handler getHandlerMain( Handler.Callback callback) {
         return MainHandler.getInstance().getHandlerMain(callback);
     }
     @Deprecated
@@ -52,7 +48,7 @@ public final class TS {
      * @param delayMillis 延迟时间
      */
     @Deprecated
-    public static boolean postDelayed(@NonNull final Runnable runnable, final long delayMillis) {
+    public static boolean postDelayed( final Runnable runnable, final long delayMillis) {
         return MainHandler.getInstance().postDelayed(runnable, delayMillis);
     }
 
@@ -63,7 +59,7 @@ public final class TS {
      * @param uptimeMillis 设定时间
      */
     @Deprecated
-    public static boolean postAtTime(@NonNull final Runnable runnable, final long uptimeMillis) {
+    public static boolean postAtTime( final Runnable runnable, final long uptimeMillis) {
         return MainHandler.getInstance().postAtTime(runnable, uptimeMillis);
     }
 
@@ -73,7 +69,7 @@ public final class TS {
      * @param runnable 主线程
      */
     @Deprecated
-    public static void postToMain(@NonNull final Runnable runnable) {
+    public static void postToMain( final Runnable runnable) {
         MainHandler.getInstance().postToMain(runnable);
     }
 
@@ -83,7 +79,7 @@ public final class TS {
      * @param runnable 主线程
      */
     @Deprecated
-    public static void postOnMain(@NonNull final Runnable runnable) {
+    public static void postOnMain( final Runnable runnable) {
         MainHandler.getInstance().postOnMain(runnable);
     }
 
@@ -102,7 +98,7 @@ public final class TS {
      *
      * @param runnable 工作线程
      */
-    public static void postIo(@NonNull final Runnable runnable) {
+    public static void postIo( final Runnable runnable) {
         ThreadTaskExecutor.getInstance().postIo(runnable);
     }
 
@@ -111,7 +107,7 @@ public final class TS {
      *
      * @param runnable 工作线程
      */
-    public static void postIo(@IntRange(from = 0, to = 10) int priority, @NonNull final Runnable runnable) {
+    public static void postIo( int priority,  final Runnable runnable) {
         ThreadTaskExecutor.getInstance().postIo(priority, runnable);
     }
 
@@ -120,7 +116,7 @@ public final class TS {
      *
      * @param runnable 工作线程
      */
-    public static void postOnIo(@NonNull final Runnable runnable) {
+    public static void postOnIo( final Runnable runnable) {
         ThreadTaskExecutor.getInstance().postOnIo(runnable);
     }
 
@@ -136,11 +132,11 @@ public final class TS {
         return ThreadTaskExecutor.getInstance().submit(task);
     }
 
-    public static <T> Future<T> submit(@IntRange(from = 0, to = 10) int priority, Runnable task, T result) {
+    public static <T> Future<T> submit( int priority, Runnable task, T result) {
         return ThreadTaskExecutor.getInstance().submit(priority, task, result);
     }
 
-    public static Future<?> submit(@IntRange(from = 0, to = 10) int priority, Runnable task) {
+    public static Future<?> submit( int priority, Runnable task) {
         return ThreadTaskExecutor.getInstance().submit(priority, task);
     }
 

@@ -1,6 +1,6 @@
 package hos.thread.task;
 
-import androidx.annotation.NonNull;
+
 
 /**
  * <p>Title: Utils </p>
@@ -15,7 +15,7 @@ class Utils {
     /**
      * 比较两个任务的先后顺序，优先级越高越先执行
      */
-    public static int compareTask(@NonNull Task task1, @NonNull Task task2) {
+    public static int compareTask( Task task1,  Task task2) {
         return Integer.compare(task2.getPriority(), task1.getPriority());
     }
 }

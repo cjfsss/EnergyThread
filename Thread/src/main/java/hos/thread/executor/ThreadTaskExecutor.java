@@ -2,8 +2,8 @@ package hos.thread.executor;
 
 import android.os.Handler;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
@@ -22,13 +22,13 @@ import java.util.concurrent.Future;
 public class ThreadTaskExecutor extends ThreadExecutor {
     private static volatile ThreadTaskExecutor sInstance;
 
-    @NonNull
+    
     private ThreadExecutor mDelegate;
 
-    @NonNull
+    
     private final ThreadExecutor mDefaultTaskExecutor;
 
-    @NonNull
+    
     private static final Executor sMainThreadExecutor = new Executor() {
         @Override
         public void execute(Runnable command) {
@@ -36,7 +36,7 @@ public class ThreadTaskExecutor extends ThreadExecutor {
         }
     };
 
-    @NonNull
+    
     private static final Executor sIOThreadExecutor = new Executor() {
         @Override
         public void execute(Runnable command) {
@@ -54,7 +54,7 @@ public class ThreadTaskExecutor extends ThreadExecutor {
      *
      * @return The singleton ArchTaskExecutor.
      */
-    @NonNull
+    
     public static ThreadTaskExecutor getInstance() {
         if (sInstance != null) {
             return sInstance;
@@ -77,16 +77,16 @@ public class ThreadTaskExecutor extends ThreadExecutor {
      *
      * @param taskExecutor The task executor to handle task requests.
      */
-    public void setDelegate(@Nullable ThreadExecutor taskExecutor) {
+    public void setDelegate( ThreadExecutor taskExecutor) {
         mDelegate = taskExecutor == null ? mDefaultTaskExecutor : taskExecutor;
     }
 
-    @NonNull
+    
     public static Executor getMainThreadExecutor() {
         return sMainThreadExecutor;
     }
 
-    @NonNull
+    
     public static Executor getIOThreadExecutor() {
         return sIOThreadExecutor;
     }
@@ -102,12 +102,12 @@ public class ThreadTaskExecutor extends ThreadExecutor {
     }
 
     @Override
-    public void postIo(@NonNull Runnable runnable) {
+    public void postIo( Runnable runnable) {
         mDelegate.postIo(runnable);
     }
 
     @Override
-    public void postIo(int priority, @NonNull Runnable runnable) {
+    public void postIo(int priority,  Runnable runnable) {
         mDelegate.postIo(priority, runnable);
     }
 

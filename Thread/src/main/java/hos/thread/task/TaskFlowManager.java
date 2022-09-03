@@ -4,8 +4,8 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.MainThread;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+
 
 import java.util.List;
 import java.util.Random;
@@ -29,7 +29,7 @@ import hos.thread.executor.ThreadTaskExecutor;
  */
 public class TaskFlowManager {
 
-    @NonNull
+    
     private final ReentrantLock lock = new ReentrantLock();
 
     private volatile CountDownLatch mCountDownLatch;
@@ -76,7 +76,7 @@ public class TaskFlowManager {
 
     //project任务组，也有可能是独立的-个task
     @MainThread
-    public void start(Task task, @Nullable TaskListener.ProgressUpdate progressUpdate) {
+    public void start(Task task,  TaskListener.ProgressUpdate progressUpdate) {
         if (!isFinish()) {
             // 还没有结束，运行时
             if (BuildConfig.DEBUG) {
@@ -142,7 +142,7 @@ public class TaskFlowManager {
                 .start(task, progressUpdate);
     }
 
-    private void addProgressListener(@Nullable TaskListener.ProgressUpdate progressUpdate) {
+    private void addProgressListener( TaskListener.ProgressUpdate progressUpdate) {
         ThreadTaskExecutor.getInstance().postIo(10, new Runnable() {
             @SuppressWarnings("BusyWait")
             @Override
@@ -181,7 +181,7 @@ public class TaskFlowManager {
         });
     }
 
-    private void addTaskListener(@NonNull Task task) {
+    private void addTaskListener( Task task) {
         for (Task behindTask : task.getBehindTasks()) {
             if (behindTask instanceof TaskProject.CriticalTask || behindTask instanceof TaskProject) {
                 continue;
@@ -189,7 +189,7 @@ public class TaskFlowManager {
             behindTask.addTaskListener(new TaskListener.Finished() {
 
                 @Override
-                public void onError(@NonNull Task task) {
+                public void onError( Task task) {
                     lock.lock();
                     try {
                         errorCount++;
@@ -200,7 +200,7 @@ public class TaskFlowManager {
                 }
 
                 @Override
-                public void onFinished(@NonNull Task task) {
+                public void onFinished( Task task) {
                     lock.lock();
                     try {
                         mCountDownLatch.countDown();
@@ -214,7 +214,7 @@ public class TaskFlowManager {
         }
     }
 
-    public void onProgress(@Nullable TaskListener.ProgressUpdate progressUpdate, Integer progress) {
+    public void onProgress( TaskListener.ProgressUpdate progressUpdate, Integer progress) {
         if (progressUpdate == null) {
             return;
         }

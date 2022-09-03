@@ -1,6 +1,6 @@
 package hos.thread.task;
 
-import androidx.annotation.NonNull;
+
 
 /**
  * <p>Title: TaskCreater </p>
@@ -12,6 +12,6 @@ import androidx.annotation.NonNull;
  * @date : 2022/3/16 20:31
  */
 public interface ITaskCreator {
-    @NonNull
-    Task createTask(@NonNull String taskName);
+    
+    Task createTask( String taskName);
 }

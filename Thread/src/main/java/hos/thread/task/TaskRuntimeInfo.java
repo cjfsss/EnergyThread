@@ -2,8 +2,8 @@ package hos.thread.task;
 
 import android.util.SparseArray;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+
 
 /**
  * <p>Title: TaskRuntimeInfo </p>
@@ -15,14 +15,14 @@ import androidx.annotation.Nullable;
  * @date : 2022/3/16 20:22
  */
 class TaskRuntimeInfo {
-    @NonNull
+    
     private final SparseArray<Long> stateTime = new SparseArray<Long>();
     private boolean isBlockTask = false;
     private String threadName;
     private Throwable throwable;
     private final Task task;
 
-    public TaskRuntimeInfo(@NonNull Task task) {
+    public TaskRuntimeInfo( Task task) {
         this.task = task;
     }
 
@@ -34,11 +34,11 @@ class TaskRuntimeInfo {
         return stateTime.get(state);
     }
 
-    public boolean isSameTask(@Nullable Task task) {
+    public boolean isSameTask( Task task) {
         return task != null && task == this.task;
     }
 
-    @NonNull
+    
     public Task getTask() {
         return task;
     }

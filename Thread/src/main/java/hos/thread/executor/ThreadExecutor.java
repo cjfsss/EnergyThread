@@ -2,9 +2,6 @@ package hos.thread.executor;
 
 import android.os.Handler;
 
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -27,15 +24,15 @@ public abstract class ThreadExecutor {
 
     public abstract ExecutorService getThread();
 
-    @NonNull
+    
     @Deprecated
     public Handler getHandler() {
         return MainHandler.getInstance().getHandler();
     }
 
-    @NonNull
+    
     @Deprecated
-    public Handler getHandlerMain(@Nullable Handler.Callback callback) {
+    public Handler getHandlerMain( Handler.Callback callback) {
         return MainHandler.getInstance().getHandlerMain(callback);
     }
 
@@ -51,7 +48,7 @@ public abstract class ThreadExecutor {
      * @param delayMillis 延迟时间
      */
     @Deprecated
-    public boolean postDelayed(@NonNull final Runnable runnable, final long delayMillis) {
+    public boolean postDelayed( final Runnable runnable, final long delayMillis) {
         return MainHandler.getInstance().postDelayed(runnable, delayMillis);
     }
 
@@ -62,7 +59,7 @@ public abstract class ThreadExecutor {
      * @param uptimeMillis 设定时间
      */
     @Deprecated
-    public boolean postAtTime(@NonNull final Runnable runnable, final long uptimeMillis) {
+    public boolean postAtTime( final Runnable runnable, final long uptimeMillis) {
         return MainHandler.getInstance().postAtTime(runnable, uptimeMillis);
     }
 
@@ -72,7 +69,7 @@ public abstract class ThreadExecutor {
      * @param runnable 主线程
      */
     @Deprecated
-    public void postToMain(@NonNull final Runnable runnable) {
+    public void postToMain( final Runnable runnable) {
         MainHandler.getInstance().postToMain(runnable);
     }
 
@@ -82,7 +79,7 @@ public abstract class ThreadExecutor {
      * @param runnable 主线程
      */
     @Deprecated
-    public void postOnMain(@NonNull final Runnable runnable) {
+    public void postOnMain( final Runnable runnable) {
         MainHandler.getInstance().postOnMain(runnable);
     }
 
@@ -91,7 +88,7 @@ public abstract class ThreadExecutor {
      *
      * @param runnable 工作线程
      */
-    public void postIo(@NonNull final Runnable runnable) {
+    public void postIo( final Runnable runnable) {
         postIo(0, runnable);
     }
 
@@ -100,14 +97,14 @@ public abstract class ThreadExecutor {
      *
      * @param runnable 工作线程
      */
-    public abstract void postIo(@IntRange(from = 0, to = 10) int priority, @NonNull final Runnable runnable);
+    public abstract void postIo( int priority,  final Runnable runnable);
 
     /**
      * 运行在工作线程
      *
      * @param runnable 工作线程
      */
-    public void postOnIo(@NonNull final Runnable runnable) {
+    public void postOnIo( final Runnable runnable) {
         if (MainHandler.getInstance().isMainThread()) {
             postIo(runnable);
         } else {
@@ -135,9 +132,9 @@ public abstract class ThreadExecutor {
         return submit(0, task);
     }
 
-    public abstract <T> Future<T> submit(@IntRange(from = 0, to = 10) int priority, Runnable task, T result);
+    public abstract <T> Future<T> submit( int priority, Runnable task, T result);
 
-    public abstract Future<?> submit(@IntRange(from = 0, to = 10) int priority, Runnable task);
+    public abstract Future<?> submit( int priority, Runnable task);
 
     public abstract void pause();
 

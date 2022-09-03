@@ -2,8 +2,8 @@ package hos.thread.hander;
 
 import android.os.Handler;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+
 
 /**
  * <p>Title: MainExecutor </p>
@@ -16,11 +16,11 @@ import androidx.annotation.Nullable;
  */
 public interface MainHandlerExecutor {
 
-    @NonNull
+    
     Handler getHandler();
 
-    @NonNull
-    Handler getHandlerMain(@Nullable Handler.Callback callback);
+    
+    Handler getHandlerMain( Handler.Callback callback);
 
     void clearCallback();
 
@@ -30,7 +30,7 @@ public interface MainHandlerExecutor {
      * @param runnable    运行
      * @param delayMillis 延迟时间
      */
-    boolean postDelayed(@NonNull final Runnable runnable, final long delayMillis);
+    boolean postDelayed( final Runnable runnable, final long delayMillis);
 
     /**
      * 指定时间执行
@@ -38,21 +38,21 @@ public interface MainHandlerExecutor {
      * @param runnable     主线程
      * @param uptimeMillis 设定时间
      */
-    boolean postAtTime(@NonNull final Runnable runnable, final long uptimeMillis);
+    boolean postAtTime( final Runnable runnable, final long uptimeMillis);
 
     /**
      * 切换到主线程
      *
      * @param runnable 主线程
      */
-    void postToMain(@NonNull final Runnable runnable);
+    void postToMain( final Runnable runnable);
 
     /**
      * 在主线程上运行
      *
      * @param runnable 主线程
      */
-    default void postOnMain(@NonNull final Runnable runnable) {
+    default void postOnMain( final Runnable runnable) {
         if (isMainThread()) {
             runnable.run();
         } else {
@@ -60,9 +60,9 @@ public interface MainHandlerExecutor {
         }
     }
 
-    void sendAtFrontOfQueue(@NonNull final Runnable runnable);
+    void sendAtFrontOfQueue( final Runnable runnable);
 
-    void remove(@NonNull final Runnable runnable);
+    void remove( final Runnable runnable);
 
     boolean isMainThread();
 }

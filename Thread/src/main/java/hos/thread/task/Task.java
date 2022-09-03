@@ -5,8 +5,8 @@ import android.os.Build;
 import android.os.Trace;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ import hos.thread.BuildConfig;
  * @date : 2022/3/16 20:37
  */
 public abstract class Task implements Runnable, Comparable<Task> {
-    @NonNull
+    
     private final String id;
     private final boolean isAsyncTask;
     private final long delayMills;
@@ -35,37 +35,37 @@ public abstract class Task implements Runnable, Comparable<Task> {
     private long executeTime;// 任务执行时间
     private int state;// 任务执行状态
     // 用于运行时log，输出统计，输出当前的task, 依赖了哪些前置任务，这些前置任务的名称，我们将它存储在这里
-    @NonNull
+    
     private final List<String> dependTasksName = new ArrayList<>();
     // 当前Task依赖的那些前置任务，只有当dependTasks中的所有任务执行完成，当前任务才可以执行
-    @NonNull
+    
     private final List<Task> dependTasks = new ArrayList<>();
     // 当前Task被哪些后置任务依赖，只有当当前任务执行完成，behindTasks集合中任务才可以执行
-    @NonNull
+    
     private final List<Task> behindTasks = new ArrayList<>();
-    @NonNull
+    
     private final List<TaskListener> taskListeners = new ArrayList<>();
-    @NonNull
+    
     private final List<Object> paramList = new ArrayList<>();
     // 运行时日志
-    @Nullable
+    
     private TaskRuntimeListener taskRuntimeListener;
 
-    @Nullable
+    
     private Throwable throwable;
 
-    public void addTaskListener(@NonNull TaskListener listener) {
+    public void addTaskListener( TaskListener listener) {
         if (!taskListeners.contains(listener)) {
             taskListeners.add(listener);
         }
     }
 
-    public void removeTaskListener(@NonNull TaskListener listener) {
+    public void removeTaskListener( TaskListener listener) {
         taskListeners.remove(listener);
     }
 
 
-    public Task(@NonNull String id, boolean isAsyncTask, long delayMills, int priority, Object params) {
+    public Task( String id, boolean isAsyncTask, long delayMills, int priority, Object params) {
         this.id = id;
         this.isAsyncTask = isAsyncTask;
         this.delayMills = delayMills;
@@ -82,27 +82,27 @@ public abstract class Task implements Runnable, Comparable<Task> {
         }
     }
 
-    public Task(@NonNull String id, boolean isAsyncTask, long delayMills, int priority) {
+    public Task( String id, boolean isAsyncTask, long delayMills, int priority) {
         this(id, isAsyncTask, delayMills, priority, null);
     }
 
-    public Task(@NonNull String id, boolean isAsyncTask, Object params) {
+    public Task( String id, boolean isAsyncTask, Object params) {
         this(id, isAsyncTask, 0, 0, params);
     }
 
-    public Task(@NonNull String id, boolean isAsyncTask) {
+    public Task( String id, boolean isAsyncTask) {
         this(id, isAsyncTask, null);
     }
 
-    public Task(@NonNull String id, Object params) {
+    public Task( String id, Object params) {
         this(id, true, params);
     }
 
-    public Task(@NonNull String id) {
+    public Task( String id) {
         this(id, true);
     }
 
-    @NonNull
+    
     public String getId() {
         return id;
     }
@@ -131,22 +131,22 @@ public abstract class Task implements Runnable, Comparable<Task> {
         return state;
     }
 
-    @NonNull
+    
     List<Task> getDependTasks() {
         return dependTasks;
     }
 
-    @NonNull
+    
     List<Task> getBehindTasks() {
         return behindTasks;
     }
 
-    @NonNull
+    
     List<String> getDependTasksName() {
         return dependTasksName;
     }
 
-    @Nullable
+    
     public Throwable getThrowable() {
         return throwable;
     }
@@ -155,13 +155,13 @@ public abstract class Task implements Runnable, Comparable<Task> {
         return throwable == null;
     }
 
-    @NonNull
-    public Task param(@NonNull Object... params) {
+    
+    public Task param( Object... params) {
         paramList.addAll(Arrays.asList(params));
         return this;
     }
 
-    @NonNull
+    
     public List<Object> getParamList() {
         return paramList;
     }
@@ -233,7 +233,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
         }
     }
 
-    private void dependTaskFinished(@NonNull Task dependTask) {
+    private void dependTaskFinished( Task dependTask) {
         // A behindTask -> (B,C ) A执行完成后，B/C才可以执行
         // task->B,C   dependTask -> A
         if (dependTasks.isEmpty()) {
@@ -248,7 +248,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
     }
 
     // 给当前task   添加一个  前置依赖任务
-    protected void dependOn(@NonNull Task dependTask) {
+    protected void dependOn( Task dependTask) {
         Task task = dependTask;
         if (task != this) {
             if (dependTask instanceof TaskProject) {
@@ -264,7 +264,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
     }
 
     // 给当前任务移除一个前置任务
-    protected void removeDependence(@NonNull Task dependTask) {
+    protected void removeDependence( Task dependTask) {
         Task task = dependTask;
         if (dependTask != this) {
             if (dependTask instanceof TaskProject) {
@@ -279,7 +279,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
     }
 
     // 给当前任务添加一个后置依赖任务，他和前置任务是相反的
-    protected void behind(@NonNull Task behindTask) {
+    protected void behind( Task behindTask) {
         Task task = behindTask;
         if (behindTask != this) {
             if (behindTask instanceof TaskProject) {
@@ -293,7 +293,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
     }
 
     // 从当前task中移除一个后置任务
-    protected void removeBehind(@NonNull Task behindTask) {
+    protected void removeBehind( Task behindTask) {
         Task task = behindTask;
         if (behindTask != this) {
             if (behindTask instanceof TaskProject) {
@@ -339,7 +339,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
         }
     }
 
-    protected abstract void run(@NonNull String id);
+    protected abstract void run( String id);
 
     @Override
     public int compareTo(Task other) {

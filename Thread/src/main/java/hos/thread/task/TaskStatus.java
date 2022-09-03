@@ -1,9 +1,5 @@
 package hos.thread.task;
 
-import androidx.annotation.IntDef;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 /**
  * <p>Title: TaskStatus </p>

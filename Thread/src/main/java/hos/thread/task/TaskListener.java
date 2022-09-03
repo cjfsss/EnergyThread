@@ -1,6 +1,6 @@
 package hos.thread.task;
 
-import androidx.annotation.NonNull;
+
 
 /**
  * <p>Title: TaskListener </p>
@@ -12,18 +12,18 @@ import androidx.annotation.NonNull;
  * @date : 2022/3/16 20:52
  */
 public interface TaskListener {
-    void onStart(@NonNull Task task);
+    void onStart( Task task);
 
-    void onRunning(@NonNull Task task);
+    void onRunning( Task task);
 
-    void onError(@NonNull Task task);
+    void onError( Task task);
 
-    void onFinished(@NonNull Task task);
+    void onFinished( Task task);
 
     abstract class Running implements TaskListener {
 
         @Override
-        public void onStart(@NonNull Task task) {
+        public void onStart( Task task) {
         }
 
     }
@@ -31,11 +31,11 @@ public interface TaskListener {
     abstract class Finished implements TaskListener {
 
         @Override
-        public void onStart(@NonNull Task task) {
+        public void onStart( Task task) {
         }
 
         @Override
-        public void onRunning(@NonNull Task task) {
+        public void onRunning( Task task) {
         }
     }
 
@@ -44,6 +44,6 @@ public interface TaskListener {
          * 进度监听
          * @param progress 200 成功  400 失败
          */
-        void onProgressUpdate(@NonNull Integer progress);
+        void onProgressUpdate( Integer progress);
     }
 }

@@ -3,8 +3,8 @@ package hos.thread.task;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,20 +36,20 @@ class TaskRuntime {
      * 通过addBlockTask(String id) 指定启动阶段 需要阻塞完成的任务，只有当blockTaskId中的任务都执行完成了
      * 才会是否application中的阻塞 才会来切launchActivity
      */
-    @NonNull
+    
     private static final List<String> blockTaskId = new ArrayList<>();
     /**
      * 如果blockTaskId集合中的任务还没有执行完成，那么在主线程中的任务会添加到waitingTasks集合里去
      * 目的是为了优先保证 阻塞任务的优先完成，尽可能早的拉起launchActivity
      */
-    @NonNull
+    
     private static final List<Task> waitingTasks = new ArrayList<>();
     /**
      * 记录下所有任务运行时的信息 key 任务ID，
      */
-    @NonNull
+    
     private static final Map<String, TaskRuntimeInfo> taskRuntimeInfoMap = new HashMap<>();
-    @NonNull
+    
     static Comparator<Task> taskComparator = new Comparator<Task>() {
         @Override
         public int compare(Task task1, Task task2) {
@@ -57,13 +57,13 @@ class TaskRuntime {
         }
     };
 
-    public static void addBlockTask(@NonNull String id) {
+    public static void addBlockTask( String id) {
         if (!TextUtils.isEmpty(id) && !blockTaskId.contains(id)) {
             blockTaskId.add(id);
         }
     }
 
-    public static void addBlockTasks(@Nullable String... ids) {
+    public static void addBlockTasks( String... ids) {
         if (ids != null && ids.length != 0) {
             for (String id : ids) {
                 addBlockTask(id);
@@ -71,7 +71,7 @@ class TaskRuntime {
         }
     }
 
-    public static void removeBlockTask(@NonNull String id) {
+    public static void removeBlockTask( String id) {
         blockTaskId.remove(id);
     }
 
@@ -83,14 +83,14 @@ class TaskRuntime {
         return waitingTasks.iterator().hasNext();
     }
 
-    public static void setThreadName(@NonNull Task task, @NonNull String threadName) {
+    public static void setThreadName( Task task,  String threadName) {
         TaskRuntimeInfo taskRuntimeInfo = getTaskRuntimeInfo(task.getId());
         if (taskRuntimeInfo != null) {
             taskRuntimeInfo.setThreadName(threadName);
         }
     }
 
-    public static void setStateInfo(@NonNull Task task) {
+    public static void setStateInfo( Task task) {
         TaskRuntimeInfo taskRuntimeInfo = getTaskRuntimeInfo(task.getId());
         if (taskRuntimeInfo != null) {
             if (task.getThrowable() != null) {
@@ -100,12 +100,12 @@ class TaskRuntime {
         }
     }
 
-    @Nullable
-    public static TaskRuntimeInfo getTaskRuntimeInfo(@NonNull String id) {
+    
+    public static TaskRuntimeInfo getTaskRuntimeInfo( String id) {
         return taskRuntimeInfoMap.get(id);
     }
 
-    public static void executeTask(@NonNull Task task) {
+    public static void executeTask( Task task) {
         if (task.isAsyncTask()) {
             ThreadTaskExecutor.getInstance().postIo(task.getPriority(), task);
         } else {
@@ -130,7 +130,7 @@ class TaskRuntime {
      *
      * @param task
      */
-    private static void addWaitingTask(@NonNull Task task) {
+    private static void addWaitingTask( Task task) {
         if (!waitingTasks.contains(task)) {
             waitingTasks.add(task);
         }
@@ -139,7 +139,7 @@ class TaskRuntime {
     /**
      * 检查延迟任务是否存在这后置任务 阻塞任务（等他们都执行完了，才能拉起 launchActivity）
      */
-    private static boolean hasBlockBehindTask(@NonNull Task task) {
+    private static boolean hasBlockBehindTask( Task task) {
         if (task instanceof TaskProject.CriticalTask) {
             // 开始节点，结束节点，这种情况是要忽略掉的
             return false;
@@ -161,7 +161,7 @@ class TaskRuntime {
      * 校验  依赖中是否存在环形依赖，依赖树中是否存在TaskId相同的依赖，初始化task中taskRuntimeInfo
      * 完成启动前的校验 和初始化
      */
-    public static void traversalDependencyTreeAndInit(@NonNull Task task) {
+    public static void traversalDependencyTreeAndInit( Task task) {
         List<Task> traversalVisitor = new LinkedList<>();
         traversalVisitor.add(task);
         innerTraversalDependencyTreeAndInit(task, traversalVisitor);
@@ -179,7 +179,7 @@ class TaskRuntime {
     }
 
     // 优先级处理
-    private static void traversalDependencyPriority(@Nullable Task task) {
+    private static void traversalDependencyPriority( Task task) {
         if (task == null) {
             return;
         }
@@ -189,7 +189,7 @@ class TaskRuntime {
 //        }
     }
 
-    private static void innerTraversalDependencyTreeAndInit(@NonNull Task task, @NonNull List<Task> traversalVisitor) {
+    private static void innerTraversalDependencyTreeAndInit( Task task,  List<Task> traversalVisitor) {
         // 初始化任务运行信息 并校验是否存在相同的 taskId
         TaskRuntimeInfo taskRuntimeInfo = getTaskRuntimeInfo(task.getId());
         if (taskRuntimeInfo == null) {

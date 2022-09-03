@@ -4,8 +4,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+
 
 /**
  * <p>Title: MainHandler </p>
@@ -22,10 +22,10 @@ public class MainHandler implements MainHandlerExecutor {
 
     private static MainHandler sInstance;
 
-    @Nullable
+    
     private volatile Handler mMainHandler;
 
-    @NonNull
+    
     public static MainHandler getInstance() {
         if (sInstance != null) {
             return sInstance;
@@ -41,7 +41,7 @@ public class MainHandler implements MainHandlerExecutor {
     private MainHandler() {
     }
 
-    @NonNull
+    
     @Override
     public Handler getHandler() {
         if (mMainHandler == null) {
@@ -55,9 +55,9 @@ public class MainHandler implements MainHandlerExecutor {
         return mMainHandler;
     }
 
-    @NonNull
+    
     @Override
-    public Handler getHandlerMain(@Nullable Handler.Callback callback) {
+    public Handler getHandlerMain( Handler.Callback callback) {
         return new Handler(Looper.getMainLooper(), callback);
     }
 
@@ -67,28 +67,28 @@ public class MainHandler implements MainHandlerExecutor {
     }
 
     @Override
-    public boolean postDelayed(@NonNull Runnable runnable, long delayMillis) {
+    public boolean postDelayed( Runnable runnable, long delayMillis) {
         return getHandler().postDelayed(runnable, delayMillis);
     }
 
     @Override
-    public boolean postAtTime(@NonNull Runnable runnable, long uptimeMillis) {
+    public boolean postAtTime( Runnable runnable, long uptimeMillis) {
         return getHandler().postAtTime(runnable, uptimeMillis);
     }
 
     @Override
-    public void postToMain(@NonNull Runnable runnable) {
+    public void postToMain( Runnable runnable) {
         getHandler().post(runnable);
     }
 
     @Override
-    public void sendAtFrontOfQueue(@NonNull Runnable runnable) {
+    public void sendAtFrontOfQueue( Runnable runnable) {
         Message msg = Message.obtain(getHandler(), runnable);
         getHandler().sendMessageAtFrontOfQueue(msg);
     }
 
     @Override
-    public void remove(@NonNull Runnable runnable) {
+    public void remove( Runnable runnable) {
         getHandler().removeCallbacks(runnable);
     }
 

@@ -5,8 +5,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -129,10 +129,10 @@ class DefaultThreadExecutor extends ThreadExecutor {
 //    /**
 //     * 多线程池
 //     */
-//    @Nullable
+//    
 //    private ExecutorService mMultiThread;
 //
-//    @NonNull
+//    
 //    private ExecutorService getExecutorService() {
 //        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
 //                CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
@@ -156,7 +156,7 @@ class DefaultThreadExecutor extends ThreadExecutor {
     }
 
     @Override
-    public void postIo(int priority, @NonNull Runnable runnable) {
+    public void postIo(int priority,  Runnable runnable) {
         mDiskIO.execute(new PriorityRunnable(priority, runnable));
     }
 

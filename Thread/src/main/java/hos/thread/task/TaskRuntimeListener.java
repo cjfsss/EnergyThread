@@ -2,7 +2,7 @@ package hos.thread.task;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
+
 
 import java.util.List;
 
@@ -38,34 +38,34 @@ public class TaskRuntimeListener implements TaskListener {
     static final String HALF_LINE = "==================";
 
     @Override
-    public void onStart(@NonNull Task task) {
+    public void onStart( Task task) {
         if (BuildConfig.DEBUG) {
             Log.e(TAG, task.getId() + START_METHOD);
         }
     }
 
     @Override
-    public void onRunning(@NonNull Task task) {
+    public void onRunning( Task task) {
         if (BuildConfig.DEBUG) {
             Log.e(TAG, task.getId() + RUNNING_METHOD);
         }
     }
 
     @Override
-    public void onError(@NonNull Task task) {
+    public void onError( Task task) {
         if (BuildConfig.DEBUG) {
             Log.e(TAG, task.getId() + ERROR_METHOD);
         }
     }
 
     @Override
-    public void onFinished(@NonNull Task task) {
+    public void onFinished( Task task) {
         if (BuildConfig.DEBUG) {
             logTaskRuntimeInfo(task);
         }
     }
 
-    private void logTaskRuntimeInfo(@NonNull Task task) {
+    private void logTaskRuntimeInfo( Task task) {
         TaskRuntimeInfo taskRuntimeInfo = TaskRuntime.getTaskRuntimeInfo(task.getId());
         if (taskRuntimeInfo == null) {
             return;
@@ -116,15 +116,15 @@ public class TaskRuntimeListener implements TaskListener {
 
 
     private void addTaskInfoLineInfo(
-            @NonNull StringBuilder builder,
-            @NonNull String key,
-            @NonNull String value
+             StringBuilder builder,
+             String key,
+             String value
     ) {
         builder.append("| ").append(key).append(": ").append(value).append(" \n");
     }
 
-    @NonNull
-    private String getTaskDependenciesInfo(@NonNull Task task) {
+    
+    private String getTaskDependenciesInfo( Task task) {
         StringBuilder builder = new StringBuilder();
         List<String> dependTasksName = task.getDependTasksName();
         for (String name : dependTasksName) {

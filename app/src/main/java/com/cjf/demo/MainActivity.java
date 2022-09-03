@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cjf.demo.databinding.ActivityMainBinding;
@@ -35,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
     static final String TASK_ASYNC_7 = "async_task_7";
     static final String TASK_ASYNC_8 = "async_task_8";
 
-    @Nullable
+    
     private ActivityMainBinding mActivityMainBinding;
 
-    @NonNull
+    
     private ActivityMainBinding getBinding() {
         if (mActivityMainBinding == null) {
             return mActivityMainBinding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -91,12 +91,12 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    protected void onCompleted(@Nullable String s) {
+                    protected void onCompleted( String s) {
                         getBinding().btnThreadIO.setText(s);
                     }
 
                     @Override
-                    protected void onError(@NonNull Throwable e) {
+                    protected void onError( Throwable e) {
                         getBinding().btnThreadIO.setText("工作线程（失败）");
                     }
                 });
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 createTaskMain(), createTaskMain(), createTaskMain(), createTaskMain(), createTaskMain());
         TaskFlowManager.concurrence(taskProject, new TaskListener.ProgressUpdate() {
             @Override
-            public void onProgressUpdate(@NonNull Integer progress) {
+            public void onProgressUpdate( Integer progress) {
                 if (progress == 200) {
                     getBinding().btnThread.setText("并发请求（成功)");
                 } else if (progress == 400) {
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 .addBlockTask(TASK_BLOCK_4)
                 .start(project, new TaskListener.ProgressUpdate() {
                     @Override
-                    public void onProgressUpdate(@NonNull Integer progress) {
+                    public void onProgressUpdate( Integer progress) {
                         if (progress == 200) {
                             getBinding().btnThreadAppStart.setText("App启动（成功)");
                         } else if (progress == 400) {
@@ -189,9 +189,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ITaskCreator createTaskCreator() {
         return new ITaskCreator() {
-            @NonNull
+            
             @Override
-            public Task createTask(@NonNull String taskName) {
+            public Task createTask( String taskName) {
                 switch (taskName) {
                     case TASK_ASYNC_1:
                     case TASK_ASYNC_2:
@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         return new Task(taskName, isAsync) {
 
             @Override
-            protected void run(@NonNull String id) {
+            protected void run( String id) {
                 try {
                     if (isAsync) {
                         Thread.sleep(2000 + new Random().nextInt(1000));
@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
 //            list.add(new TaskLive<String, Integer, Boolean>()
 //                    .setDoInBackground(new IDoInBackground<String, Integer, Boolean>() {
 //                        @Override
-//                        public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<String> strings) {
+//                        public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate,  List<String> strings) {
 //                            try {
 //                                Thread.sleep(3000);
 //                                return true;
@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
 //            list.add(new TaskThread<String, Integer, Boolean>(i)
 //                    .setDoInBackground(new IDoInBackground<String, Integer, Boolean>() {
 //                        @Override
-//                        public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate, @Nullable List<String> strings) {
+//                        public Boolean doInBackground(IProgressUpdate<Integer> progressUpdate,  List<String> strings) {
 //                            try {
 //                                Random random = new Random();
 //                                int nextInt = random.nextInt(3);
@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
 //                    })
 //                    .setPostExecute(new IPostExecute<Boolean>() {
 //                        @Override
-//                        public void onPostExecute(int index, @NonNull Boolean aBoolean) {
+//                        public void onPostExecute(int index,  Boolean aBoolean) {
 //
 //                        }
 //                    }));
@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
 //                })
 //                .startOnExecutor(new IPostExecute<Boolean>() {
 //                    @Override
-//                    public void onPostExecute(int index, @NonNull Boolean isSuccess) {
+//                    public void onPostExecute(int index,  Boolean isSuccess) {
 //                        getBinding().tvSuccessInfo.setText("是否成功：" + isSuccess);
 //                    }
 //                });
