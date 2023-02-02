@@ -1,5 +1,7 @@
 package hos.thread.executor;
 
+import hos.thread.utils.ThreadLog;
+
 /**
  * <p>Title: PriorityRunnable </p>
  * <p>Description:  </p>
@@ -9,7 +11,7 @@ package hos.thread.executor;
  * @version : 1.0
  * @date : 2022/3/16 9:21
  */
-class PriorityRunnable implements Runnable, Comparable<PriorityRunnable> {
+final class PriorityRunnable implements Runnable, Comparable<PriorityRunnable> {
     private final int priority;
     private final Runnable runnable;
 
@@ -28,7 +30,15 @@ class PriorityRunnable implements Runnable, Comparable<PriorityRunnable> {
 
     @Override
     public void run() {
-        runnable.run();
+        ThreadLog.d("run start");
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            ThreadLog.e("run error", e);
+            throw e;
+        } finally {
+            ThreadLog.d("run end");
+        }
     }
 
     @Override

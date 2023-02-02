@@ -3,10 +3,6 @@ package hos.thread.task;
 
 import android.os.Build;
 import android.os.Trace;
-import android.util.Log;
-
-
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import hos.thread.BuildConfig;
+import hos.thread.utils.ThreadLog;
 
 /**
  * <p>Title: Task </p>
@@ -197,9 +194,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
             run(id);
         } catch (Throwable e) {
             throwable = e;
-            if (BuildConfig.DEBUG) {
-                Log.e(TaskRuntimeListener.TAG, "error", e);
-            }
+            ThreadLog.e(TaskRuntimeListener.TAG, "error", e);
             toError();
         }
         toFinished();

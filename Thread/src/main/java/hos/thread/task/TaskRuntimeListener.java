@@ -1,12 +1,9 @@
 package hos.thread.task;
 
-import android.util.Log;
-
-
-
 import java.util.List;
 
 import hos.thread.BuildConfig;
+import hos.thread.utils.ThreadLog;
 
 /**
  * <p>Title: TaskRunrimeListener </p>
@@ -38,34 +35,28 @@ public class TaskRuntimeListener implements TaskListener {
     static final String HALF_LINE = "==================";
 
     @Override
-    public void onStart( Task task) {
-        if (BuildConfig.DEBUG) {
-            Log.e(TAG, task.getId() + START_METHOD);
-        }
+    public void onStart(Task task) {
+        ThreadLog.e(TAG, task.getId() + START_METHOD);
     }
 
     @Override
-    public void onRunning( Task task) {
-        if (BuildConfig.DEBUG) {
-            Log.e(TAG, task.getId() + RUNNING_METHOD);
-        }
+    public void onRunning(Task task) {
+        ThreadLog.e(TAG, task.getId() + RUNNING_METHOD);
     }
 
     @Override
-    public void onError( Task task) {
-        if (BuildConfig.DEBUG) {
-            Log.e(TAG, task.getId() + ERROR_METHOD);
-        }
+    public void onError(Task task) {
+        ThreadLog.e(TAG, task.getId() + ERROR_METHOD);
     }
 
     @Override
-    public void onFinished( Task task) {
+    public void onFinished(Task task) {
         if (BuildConfig.DEBUG) {
             logTaskRuntimeInfo(task);
         }
     }
 
-    private void logTaskRuntimeInfo( Task task) {
+    private void logTaskRuntimeInfo(Task task) {
         TaskRuntimeInfo taskRuntimeInfo = TaskRuntime.getTaskRuntimeInfo(task.getId());
         if (taskRuntimeInfo == null) {
             return;
@@ -111,20 +102,20 @@ public class TaskRuntimeListener implements TaskListener {
         addTaskInfoLineInfo(builder, FINISHED_TIME, finishedTime + "ms");
         builder.append(HALF_LINE + HALF_LINE + HALF_LINE + HALF_LINE);
         builder.append(WRAPPER);
-        Log.d(TAG, builder.toString());
+        ThreadLog.d(TAG, builder.toString());
     }
 
 
     private void addTaskInfoLineInfo(
-             StringBuilder builder,
-             String key,
-             String value
+            StringBuilder builder,
+            String key,
+            String value
     ) {
         builder.append("| ").append(key).append(": ").append(value).append(" \n");
     }
 
-    
-    private String getTaskDependenciesInfo( Task task) {
+
+    private String getTaskDependenciesInfo(Task task) {
         StringBuilder builder = new StringBuilder();
         List<String> dependTasksName = task.getDependTasksName();
         for (String name : dependTasksName) {

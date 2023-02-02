@@ -1,15 +1,15 @@
 package hos.thread.task;
 
 import android.os.Looper;
-import android.util.Log;
 
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.ReentrantLock;
 
-import hos.thread.BuildConfig;
-import hos.thread.executor.ThreadTaskExecutor;
+import hos.thread.executor.TS;
+import hos.thread.hander.MH;
+import hos.thread.utils.ThreadLog;
 
 /**
  * <p>Title: TaskFlowManager </p>
@@ -22,7 +22,7 @@ import hos.thread.executor.ThreadTaskExecutor;
  */
 public class TaskFlowManager {
 
-    
+
     private final ReentrantLock lock = new ReentrantLock();
 
     private volatile CountDownLatch mCountDownLatch;
@@ -67,13 +67,11 @@ public class TaskFlowManager {
     }
 
     //project任务组，也有可能是独立的-个task
-    
-    public void start(Task task,  TaskListener.ProgressUpdate progressUpdate) {
+
+    public void start(Task task, TaskListener.ProgressUpdate progressUpdate) {
         if (!isFinish()) {
             // 还没有结束，运行时
-            if (BuildConfig.DEBUG) {
-                Log.e(TaskRuntimeListener.TAG, "task running");
-            }
+            ThreadLog.e(TaskRuntimeListener.TAG, "task running");
             return;
         }
         // 开始
@@ -98,7 +96,7 @@ public class TaskFlowManager {
             addTaskListener(startTask);
         }
         startTask.start();
-        ThreadTaskExecutor.getInstance().postIo(new Runnable() {
+        TS.postIo(new Runnable() {
             @Override
             public void run() {
                 while (TaskRuntime.hasBlockTasks()) {
@@ -120,7 +118,7 @@ public class TaskFlowManager {
     }
 
     private void startWaitTask() {
-        ThreadTaskExecutor.getInstance().postToMain(new Runnable() {
+        MH.postToMain(new Runnable() {
             @Override
             public void run() {
                 TaskRuntime.runWaitingTasks();
@@ -134,8 +132,8 @@ public class TaskFlowManager {
                 .start(task, progressUpdate);
     }
 
-    private void addProgressListener( TaskListener.ProgressUpdate progressUpdate) {
-        ThreadTaskExecutor.getInstance().postIo(10, new Runnable() {
+    private void addProgressListener(TaskListener.ProgressUpdate progressUpdate) {
+        TS.postIo(10, new Runnable() {
             @SuppressWarnings("BusyWait")
             @Override
             public void run() {
@@ -149,22 +147,16 @@ public class TaskFlowManager {
                     if (oldCount != currentCount) {
                         int currentProgress = (int) ((mTotalCount - currentCount) * 100 / mTotalCount);
                         oldCount = currentCount;
-                        if (BuildConfig.DEBUG) {
-                            Log.e(TaskRuntimeListener.TAG, "progress：" + currentProgress);
-                        }
+                        ThreadLog.e(TaskRuntimeListener.TAG, "progress：" + currentProgress);
                         onProgress(progressUpdate, currentProgress);
                     }
                 }
                 // 线程结束，完成所有任务
                 if (isSuccessFul) {
-                    if (BuildConfig.DEBUG) {
-                        Log.e(TaskRuntimeListener.TAG, "progress：200");
-                    }
+                    ThreadLog.e(TaskRuntimeListener.TAG, "progress：200");
                     onProgress(progressUpdate, 200);
                 } else {
-                    if (BuildConfig.DEBUG) {
-                        Log.e(TaskRuntimeListener.TAG, "progress：400  errorCount:" + errorCount);
-                    }
+                    ThreadLog.e(TaskRuntimeListener.TAG, "progress：400  errorCount:" + errorCount);
                     onProgress(progressUpdate, 400);
                 }
                 TaskRuntime.onDestroy();
@@ -173,7 +165,7 @@ public class TaskFlowManager {
         });
     }
 
-    private void addTaskListener( Task task) {
+    private void addTaskListener(Task task) {
         for (Task behindTask : task.getBehindTasks()) {
             if (behindTask instanceof TaskProject.CriticalTask || behindTask instanceof TaskProject) {
                 continue;
@@ -181,7 +173,7 @@ public class TaskFlowManager {
             behindTask.addTaskListener(new TaskListener.Finished() {
 
                 @Override
-                public void onError( Task task) {
+                public void onError(Task task) {
                     lock.lock();
                     try {
                         errorCount++;
@@ -192,7 +184,7 @@ public class TaskFlowManager {
                 }
 
                 @Override
-                public void onFinished( Task task) {
+                public void onFinished(Task task) {
                     lock.lock();
                     try {
                         mCountDownLatch.countDown();
@@ -206,11 +198,11 @@ public class TaskFlowManager {
         }
     }
 
-    public void onProgress( TaskListener.ProgressUpdate progressUpdate, Integer progress) {
+    public void onProgress(TaskListener.ProgressUpdate progressUpdate, Integer progress) {
         if (progressUpdate == null) {
             return;
         }
-        ThreadTaskExecutor.getInstance().postToMain(new Runnable() {
+        MH.postToMain(new Runnable() {
             @Override
             public void run() {
                 progressUpdate.onProgressUpdate(progress);

@@ -2,6 +2,9 @@ package hos.thread.executor;
 
 import android.os.Handler;
 
+import hos.thread.hander.MH;
+import hos.thread.utils.ThreadLog;
+
 
 /**
  * <p>Title: CallBackground </p>
@@ -18,50 +21,64 @@ public abstract class CallBackground<T> implements Runnable {
 
     @Override
     public void run() {
-        
-        Handler handler = ThreadTaskExecutor.getInstance().getHandler();
-        handler.post(new Runnable() {
+        ThreadLog.e("threadName：" + Thread.currentThread().getName());
+        MH.postToMain(new Runnable() {
             @Override
             public void run() {
-                if (isCancel()){
+                if (isCancel()) {
+                    ThreadLog.d("onCancel");
+                    // 取消
                     onCancel();
                     return;
                 }
+                // 运行前
+                ThreadLog.d("onPrepare");
                 onPrepare();
             }
         });
-        if (isCancel()){
+        if (isCancel()) {
+            // 取消
+            ThreadLog.d("onCancel");
             postOnCancel();
             return;
         }
-         T result = null;
-         Throwable throwable = null;
+        T result = null;
+        Throwable throwable = null;
         try {
+            // 运行
+            ThreadLog.d("onBackground");
             result = onBackground();
+            ThreadLog.d("onBackgroundSuccess");
         } catch (Exception e) {
             throwable = e;
-            result = null;
         } finally {
-            
             final T finalResult = result;
             final Throwable finalThrowable = throwable;
             //移除所有消息.防止需要执行onCompleted了，onPrepare还没被执行，那就不需要执行了
-            handler.removeCallbacksAndMessages(null);
-            handler.post(new Runnable() {
+//            MH.getHandler().removeCallbacksAndMessages(null);
+            MH.postToMain(new Runnable() {
                 @Override
                 public void run() {
-                    if (isCancel()){
+                    if (isCancel()) {
+                        // 取消
+                        ThreadLog.d("onCancel");
                         onCancel();
                         return;
                     }
-                    if (finalThrowable != null){
+                    if (finalThrowable != null) {
+                        // 失败
+                        ThreadLog.e("onError", finalThrowable);
                         onError(finalThrowable);
-                    } else {
-                        try {
-                            onCompleted(finalResult);
-                        } catch (Exception e) {
-                            onError(e);
-                        }
+                        return;
+                    }
+                    try {
+                        // 执行完成
+                        ThreadLog.d("onCompleted");
+                        onCompleted(finalResult);
+                    } catch (Exception e) {
+                        // 异常
+                        ThreadLog.e("onError", e);
+                        onError(e);
                     }
                 }
             });
@@ -76,8 +93,8 @@ public abstract class CallBackground<T> implements Runnable {
         isCancel = true;
     }
 
-    private void postOnCancel(){
-        ThreadTaskExecutor.getInstance().postToMain(new Runnable() {
+    private void postOnCancel() {
+        MH.postToMain(new Runnable() {
             @Override
             public void run() {
                 onCancel();
@@ -89,8 +106,8 @@ public abstract class CallBackground<T> implements Runnable {
 
     }
 
-    protected void progressUpdate( int value) {
-        ThreadTaskExecutor.getInstance().postToMain(new Runnable() {
+    protected void progressUpdate(int value) {
+        MH.postToMain(new Runnable() {
             @Override
             public void run() {
                 onProgressUpdate(value);
@@ -98,7 +115,7 @@ public abstract class CallBackground<T> implements Runnable {
         });
     }
 
-    protected void onProgressUpdate( int value) {
+    protected void onProgressUpdate(int value) {
 
     }
 
@@ -114,7 +131,7 @@ public abstract class CallBackground<T> implements Runnable {
      *
      * @return 返回结果
      */
-    
+
     protected abstract T onBackground() throws Exception;
 
     /**
@@ -122,11 +139,12 @@ public abstract class CallBackground<T> implements Runnable {
      *
      * @param t 返回结果
      */
-    protected abstract void onCompleted( T t);
+    protected abstract void onCompleted(T t);
 
     /**
      * 异常
+     *
      * @param e 异常
      */
-    protected abstract void onError( Throwable e);
+    protected abstract void onError(Throwable e);
 }

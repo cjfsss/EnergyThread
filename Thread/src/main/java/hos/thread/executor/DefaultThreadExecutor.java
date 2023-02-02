@@ -1,12 +1,5 @@
 package hos.thread.executor;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
-
-
-
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -20,6 +13,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import hos.thread.BuildConfig;
+import hos.thread.utils.ThreadLog;
 
 /**
  * <p>Title: DefaultTaskExecutor </p>
@@ -30,9 +24,8 @@ import hos.thread.BuildConfig;
  * @version : 1.0
  * @date : 2021/9/6 13:50
  */
-class DefaultThreadExecutor extends ThreadExecutor {
+final class DefaultThreadExecutor extends ThreadExecutor {
 
-    private static final String LOG_TAG = "DefaultThreadExecutor";
 //    private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
 //    // We want at least 2 threads and at most 4 threads in the core pool,
 //    // preferring to have 1 less than the CPU count to avoid saturating
@@ -85,9 +78,9 @@ class DefaultThreadExecutor extends ThreadExecutor {
             protected void afterExecute(Runnable r, Throwable t) {
                 //监控线程池耗时任务,线程创建数量,正在运行的数量
                 if (BuildConfig.DEBUG) {
-                    Log.d(LOG_TAG, "afterExecute: " + Thread.currentThread().getName());
+                    ThreadLog.d("afterExecute: " + Thread.currentThread().getName());
                     if (r instanceof PriorityRunnable) {
-                        Log.d(LOG_TAG, "已执行完的任务的优先级是: " + ((PriorityRunnable) r).getPriority());
+                        ThreadLog.d("已执行完的任务的优先级是: " + ((PriorityRunnable) r).getPriority());
                     }
                 }
             }
@@ -156,7 +149,7 @@ class DefaultThreadExecutor extends ThreadExecutor {
     }
 
     @Override
-    public void postIo(int priority,  Runnable runnable) {
+    public void postIo(int priority, Runnable runnable) {
         mDiskIO.execute(new PriorityRunnable(priority, runnable));
     }
 
@@ -185,7 +178,7 @@ class DefaultThreadExecutor extends ThreadExecutor {
             lock.unlock();
         }
         if (BuildConfig.DEBUG) {
-            Log.e(LOG_TAG, "is paused");
+            ThreadLog.e("is paused");
         }
     }
 
@@ -200,7 +193,7 @@ class DefaultThreadExecutor extends ThreadExecutor {
             lock.unlock();
         }
         if (BuildConfig.DEBUG) {
-            Log.e(LOG_TAG, "is resume");
+            ThreadLog.e("is resume");
         }
     }
 }

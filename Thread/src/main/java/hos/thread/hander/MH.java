@@ -19,12 +19,10 @@ public class MH {
     private MH() {
     }
 
-    
     public static Handler getHandler() {
         return MainHandler.getInstance().getHandler();
     }
 
-    
     public static Handler getHandlerMain( Handler.Callback callback) {
         return MainHandler.getInstance().getHandlerMain(callback);
     }

@@ -1,14 +1,12 @@
 package hos.thread.executor;
 
-import android.os.Handler;
-
-
-
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
+import hos.thread.hander.MH;
 
 /**
  * <p>Title: ThreadTaskExecutor </p>
@@ -19,7 +17,7 @@ import java.util.concurrent.Future;
  * @version : 1.0
  * @date : 2021/9/6 13:49
  */
-public class ThreadTaskExecutor extends ThreadExecutor {
+final class ThreadTaskExecutor extends ThreadExecutor {
     private static volatile ThreadTaskExecutor sInstance;
 
     
@@ -32,7 +30,7 @@ public class ThreadTaskExecutor extends ThreadExecutor {
     private static final Executor sMainThreadExecutor = new Executor() {
         @Override
         public void execute(Runnable command) {
-            getInstance().postToMain(command);
+            MH.postToMain(command);
         }
     };
 

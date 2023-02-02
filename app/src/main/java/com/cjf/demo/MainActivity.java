@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cjf.demo.databinding.ActivityMainBinding;
@@ -13,7 +11,8 @@ import com.cjf.demo.databinding.ActivityMainBinding;
 import java.util.Random;
 
 import hos.thread.executor.CallBackground;
-import hos.thread.executor.ThreadTaskExecutor;
+import hos.thread.executor.TS;
+import hos.thread.hander.MH;
 import hos.thread.task.ITaskCreator;
 import hos.thread.task.Task;
 import hos.thread.task.TaskFlowManager;
@@ -67,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         getBinding().btnThreadIO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ThreadTaskExecutor.getInstance().postIo(new CallBackground<String>() {
+                TS.postIo(new CallBackground<String>() {
 
                     @Override
                     protected void onPrepare() {
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     protected void onProgressUpdate(int value) {
-                        super.onProgressUpdate(value);
                         getBinding().btnThreadIO.setText("工作线程（" + value + "）");
                         getBinding().progressHorizontalIo.setProgress(value);
                     }
@@ -103,25 +101,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // 工作线程
-        ThreadTaskExecutor.getInstance().postIo(1, () -> {
+        TS.postIo(1, () -> {
 
         });
-        ThreadTaskExecutor.getInstance().postIo(1, new Runnable() {
+        TS.postIo(1, new Runnable() {
             @Override
             public void run() {
 
             }
         });
-        ThreadTaskExecutor.getInstance()
-                .postIo(() -> {
+        TS.postIo(new Runnable() {
+            @Override
+            public void run() {
 
-                });
+            }
+        });
         // 主线程
-        ThreadTaskExecutor.getInstance()
-                .postToMain(() -> {
+        MH.postToMain(new Runnable() {
+            @Override
+            public void run() {
 
-                });
-
+            }
+        });
     }
 
     public void startConcurrence() {

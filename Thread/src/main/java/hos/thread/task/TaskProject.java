@@ -3,9 +3,6 @@ package hos.thread.task;
 import android.os.Build;
 import android.text.TextUtils;
 
-
-
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

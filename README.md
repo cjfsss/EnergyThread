@@ -5,15 +5,19 @@
 * ##### 线程切换
 ```java
     // 工作线程
-    ThreadTaskExecutor.getInstance()
-            .postIo(() -> {
-                
-            });
-    // 主线程
-    ThreadTaskExecutor.getInstance()
-            .postToMain(() -> {
+        TS.postIo(new Runnable() {
+            @Override
+            public void run() {
 
-            });
+            }
+        });
+        // 主线程
+        MH.postToMain(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
 ```
 <br>
 
@@ -32,8 +36,6 @@ allprojects {
 
 ```groovy
 implementation 'com.github.cjfsss:Thread:0.0.2'
-implementation 'androidx.annotation:annotation:1.2.0'
-implementation 'androidx.lifecycle:lifecycle-livedata-core:2.3.1'
 ```
 
 <br>

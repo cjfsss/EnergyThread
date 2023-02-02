@@ -1,10 +1,6 @@
 package hos.thread.task;
 
 import android.text.TextUtils;
-import android.util.Log;
-
-
-
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import hos.thread.BuildConfig;
-import hos.thread.executor.ThreadTaskExecutor;
+import hos.thread.executor.TS;
+import hos.thread.hander.MH;
+import hos.thread.utils.ThreadLog;
 
 /**
  * <p>Title: TaskRuntime </p>
@@ -107,13 +105,13 @@ class TaskRuntime {
 
     public static void executeTask( Task task) {
         if (task.isAsyncTask()) {
-            ThreadTaskExecutor.getInstance().postIo(task.getPriority(), task);
+            TS.postIo(task.getPriority(), task);
         } else {
             // 主线程
             // 延迟任务 但是如果这个延迟任务，它存在这后置任务（A延迟任务）->B -> C（Black Task）
             if (task.getDelayMills() > 0 && !hasBlockBehindTask(task)) {
                 // 执行这里就说明后置任务没有阻塞任务，可以直接做延迟
-                ThreadTaskExecutor.getInstance().postDelayed(task, task.getDelayMills());
+                MH.postDelayed(task, task.getDelayMills());
                 return;
             }
             // 如果阻塞任务列表接下来没有阻塞任务就执行，有阻塞任务就加到等待队列中
@@ -219,7 +217,7 @@ class TaskRuntime {
                     builder.append(iterator.next().getId());
                     builder.append("-->");
                 }
-                Log.e(TaskRuntimeListener.TAG, builder.toString());
+                ThreadLog.e(TaskRuntimeListener.TAG, builder.toString());
             }
             // start->task->task1->task2->task3->task4->task5->end
             // 对 task3 后面的依赖任务路径上的task 做环形依赖检查 初始化 TaskRuntimeInfo 信息
@@ -238,7 +236,7 @@ class TaskRuntime {
                 head.run();
             } else {
                 for (Task waitingTask : waitingTasks) {
-                    ThreadTaskExecutor.getInstance().postDelayed(waitingTask, waitingTask.getDelayMills());
+                    MH.postDelayed(waitingTask, waitingTask.getDelayMills());
                 }
                 waitingTasks.clear();
             }
